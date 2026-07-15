@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
+import animatePlugin from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -9,8 +11,53 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      sm: "40em",
+      md: "62em",
+      lg: "74em",
+      xl: "100em",
+      "2xl": "120em",
+    },
     extend: {
       colors: {
+        brand: {
+          DEFAULT: "hsl(var(--brand-main))",
+          main: "hsl(var(--brand-main))",
+          500: "hsl(var(--brand-main))",
+          10: "hsl(var(--brand-main) / 0.1)",
+          25: "hsl(var(--brand-main) / 0.25)",
+          50: "hsl(var(--brand-main) / 0.5)",
+          100: "hsl(var(--brand-secondary))",
+        },
+        roomey: {
+          white: {
+            main: "#FFFFFF",
+            100: "#F1F1F1",
+            200: "#F4F4F4",
+            300: "#F8F8F8",
+            400: "#F9F9F9",
+            500: "#EEEEEE",
+            600: "#E5E5E5",
+          },
+          green: {
+            main: "#009A49",
+            50: "#49C3A733",
+            100: "#49C3A7",
+          },
+          red: {
+            main: "#FE251B",
+            50: "#FF00004D",
+          },
+          gray: {
+            main: "#707070",
+            100: "#A1A1A1",
+            200: "#D9D9D9",
+            300: "#5C5F62",
+          },
+          black: {
+            500: "#222222",
+          },
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -56,8 +103,23 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "brand-sm": "1rem",
+        "brand-md": "1.2rem",
+      },
+      fontFamily: {
+        sans: ["var(--font-proxima-nova)", ...defaultTheme.fontFamily.sans],
+        brand: ["var(--font-proxima-nova)", ...defaultTheme.fontFamily.sans],
+      },
+      animation: {
+        "brand-pulse": "brand-pulse 1500ms ease-in-out infinite",
+      },
+      keyframes: {
+        "brand-pulse": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
+        },
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animatePlugin],
 } satisfies Config;

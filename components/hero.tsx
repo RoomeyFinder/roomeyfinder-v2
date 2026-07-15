@@ -1,44 +1,20 @@
-import { NextLogo } from "./next-logo";
-import { SupabaseLogo } from "./supabase-logo";
+import { BrandLogo } from "./brand-logo";
 
 export function Hero() {
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
+    <div className="flex flex-col items-center gap-10 text-center">
+      <BrandLogo className="scale-125" />
+      <div className="space-y-5">
+        <h1 className="mx-auto max-w-3xl text-3xl font-medium leading-tight md:text-5xl">
+          Find Your Perfect Match: Roommates and Spaces Tailored to You
+        </h1>
+        <p className="mx-auto max-w-2xl text-base leading-7 text-muted-foreground md:text-xl">
+          Whether you&apos;re a student searching for a cozy apartment, a
+          professional seeking a shared living space, or a homeowner looking for
+          a compatible roommate, we&apos;ve got you covered.
+        </p>
       </div>
-      <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Supabase
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Next.js
-        </a>
-      </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+      <div className="my-4 h-px w-full bg-gradient-to-r from-transparent via-brand/25 to-transparent" />
     </div>
   );
 }

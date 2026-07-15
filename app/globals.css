@@ -4,52 +4,68 @@
 
 @layer base {
   :root {
+    --brand-main: 217 100% 61.4%;
+    --brand-secondary: 201 77% 64.1%;
+    --brand-success: 148 100% 30.2%;
+    --brand-success-soft: 166 50.4% 52.5%;
+    --brand-danger: 3 99.1% 55.1%;
+    --brand-gray-main: 0 0% 43.9%;
+    --brand-gray-100: 0 0% 63.1%;
+    --brand-gray-200: 0 0% 85.1%;
+    --brand-gray-300: 210 3.2% 37.3%;
+    --brand-black: 0 0% 13.3%;
+    --brand-white: 0 0% 100%;
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: var(--brand-black);
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: var(--brand-black);
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --popover-foreground: var(--brand-black);
+    --primary: var(--brand-main);
+    --primary-foreground: var(--brand-white);
+    --secondary: 217 100% 96%;
+    --secondary-foreground: var(--brand-main);
+    --muted: 0 0% 95.7%;
+    --muted-foreground: var(--brand-gray-main);
+    --accent: 217 100% 96%;
+    --accent-foreground: var(--brand-main);
+    --destructive: var(--brand-danger);
+    --destructive-foreground: var(--brand-white);
     --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --input: var(--brand-gray-100);
+    --ring: var(--brand-main);
+    --chart-1: var(--brand-main);
+    --chart-2: var(--brand-success-soft);
+    --chart-3: var(--brand-secondary);
+    --chart-4: var(--brand-success);
+    --chart-5: var(--brand-danger);
+    --radius: 1rem;
+    --swiper-pagination-color: #3a86ff;
+    --swiper-pagination-bullet-inactive-color: #fff;
+    --swiper-pagination-bullet-inactive-opacity: 1;
+    --swiper-pagination-bullet-horizontal-gap: 2px;
+    --swiper-pagination-bullet-size: 6px;
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 97.3%;
+    --card: var(--brand-black);
+    --card-foreground: 0 0% 97.3%;
+    --popover: var(--brand-black);
+    --popover-foreground: 0 0% 97.3%;
+    --primary: var(--brand-main);
+    --primary-foreground: var(--brand-white);
+    --secondary: 217 52% 18%;
+    --secondary-foreground: 217 100% 86%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 217 52% 18%;
+    --accent-foreground: 217 100% 86%;
+    --destructive: var(--brand-danger);
+    --destructive-foreground: var(--brand-white);
+    --border: 0 0% 24%;
+    --input: 0 0% 40%;
+    --ring: var(--brand-main);
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -62,7 +78,47 @@
   * {
     @apply border-border;
   }
+  html {
+    background: hsl(var(--background));
+    overscroll-behavior: none;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply min-h-screen bg-background text-foreground antialiased;
+    overscroll-behavior: none;
+  }
+  ::selection {
+    background: hsl(var(--brand-main));
+    color: hsl(var(--brand-white));
+  }
+}
+
+@layer utilities {
+  .styled-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    height: 1px;
+  }
+
+  .styled-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--brand-main) / 0.13);
+    border-radius: 999px;
+  }
+
+  .styled-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--brand-main));
+    border-radius: 999px;
+  }
+
+  .pulse {
+    animation: brand-pulse 1500ms ease-in-out infinite;
+  }
+}
+
+@keyframes brand-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
   }
 }
