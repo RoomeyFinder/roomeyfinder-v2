@@ -36,6 +36,9 @@ create table public.preferences (
   pets_preference public.pets_type,
 
 
+  match_with_home_seekers boolean not null default false,
+
+
   created_at timestamptz default now(),
 
   updated_at timestamptz default now(),
@@ -56,13 +59,6 @@ create table public.preferences (
 -- ============================================================
 -- PROFILE INTERESTS
 -- ============================================================
-
-create type public.interest_status as enum (
-  'pending',
-  'accepted',
-  'declined'
-);
-
 
 create table public.interests (
 
@@ -89,11 +85,3 @@ create table public.interests (
     check(from_profile_id <> to_profile_id)
 
 );
-
-
-create index interests_received_idx
-on public.interests(to_profile_id);
-
-
-create index interests_sent_idx
-on public.interests(from_profile_id);

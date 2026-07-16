@@ -48,6 +48,7 @@ as $$
       preference.max_age,
       preference.smoking_preference,
       preference.pets_preference,
+      preference.match_with_home_seekers,
       exists (
         select 1
         from public.homes as home
@@ -95,12 +96,34 @@ as $$
     where candidate.is_visible is true
       and candidate.profile_status = 'active'::public.user_status
       and (
-        not requester.owns_active_home
-        or not exists (
-          select 1
-          from public.homes as candidate_home
-          where candidate_home.owner_id = candidate.id
-            and candidate_home.status = 'active'::public.home_status
+        (
+          requester.owns_active_home
+          and not exists (
+            select 1
+            from public.homes as candidate_home
+            where candidate_home.owner_id = candidate.id
+              and candidate_home.status = 'active'::public.home_status
+          )
+        )
+        or (
+          not requester.owns_active_home
+          and exists (
+            select 1
+            from public.homes as candidate_home
+            where candidate_home.owner_id = candidate.id
+              and candidate_home.status = 'active'::public.home_status
+          )
+        )
+        or (
+          not requester.owns_active_home
+          and requester.match_with_home_seekers is true
+          and preference.match_with_home_seekers is true
+          and not exists (
+            select 1
+            from public.homes as candidate_home
+            where candidate_home.owner_id = candidate.id
+              and candidate_home.status = 'active'::public.home_status
+          )
         )
       )
   ),

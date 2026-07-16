@@ -234,6 +234,7 @@ export type Database = {
           created_at: string | null
           max_age: number | null
           max_distance_miles: number | null
+          match_with_home_seekers: boolean
           min_age: number | null
           move_in_from: string | null
           move_in_to: string | null
@@ -249,6 +250,7 @@ export type Database = {
           created_at?: string | null
           max_age?: number | null
           max_distance_miles?: number | null
+          match_with_home_seekers?: boolean
           min_age?: number | null
           move_in_from?: string | null
           move_in_to?: string | null
@@ -266,6 +268,7 @@ export type Database = {
           created_at?: string | null
           max_age?: number | null
           max_distance_miles?: number | null
+          match_with_home_seekers?: boolean
           min_age?: number | null
           move_in_from?: string | null
           move_in_to?: string | null
