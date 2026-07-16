@@ -26,10 +26,6 @@ create table public.profiles (
 
   bio text,
 
-  contact_phone text,
-
-  contact_email text,
-
   -- geographic location
   location geography(Point,4326),
 
@@ -44,6 +40,25 @@ create table public.profiles (
   updated_at timestamptz default now(),
   
   profile_status public.user_status
+);
+
+
+-- Contact details are private and are only visible to the owner and an
+-- accepted match. They must not live on the publicly discoverable profile.
+create table public.profile_contacts (
+
+  profile_id uuid primary key
+    references public.profiles(id)
+    on delete cascade,
+
+  contact_phone text,
+
+  contact_email text,
+
+  created_at timestamptz default now(),
+
+  updated_at timestamptz default now()
+
 );
 
 

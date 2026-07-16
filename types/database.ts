@@ -90,19 +90,25 @@ export type Database = {
           created_at: string | null
           from_profile_id: string
           id: string
+          status: Database["public"]["Enums"]["interest_status"] | null
           to_profile_id: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           from_profile_id: string
           id?: string
+          status?: Database["public"]["Enums"]["interest_status"] | null
           to_profile_id: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           from_profile_id?: string
           id?: string
+          status?: Database["public"]["Enums"]["interest_status"] | null
           to_profile_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -328,8 +334,6 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
-          contact_email: string | null
-          contact_phone: string | null
           created_at: string | null
           date_of_birth: string | null
           first_name: string | null
@@ -346,8 +350,6 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
-          contact_email?: string | null
-          contact_phone?: string | null
           created_at?: string | null
           date_of_birth?: string | null
           first_name?: string | null
@@ -364,8 +366,6 @@ export type Database = {
         }
         Update: {
           bio?: string | null
-          contact_email?: string | null
-          contact_phone?: string | null
           created_at?: string | null
           date_of_birth?: string | null
           first_name?: string | null
@@ -381,6 +381,38 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      profile_contacts: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          profile_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          profile_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          profile_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_contacts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       spatial_ref_sys: {
         Row: {
@@ -452,6 +484,40 @@ export type Database = {
       }
     }
     Functions: {
+      get_matches: {
+        Args: { requesting_profile_id: string }
+        Returns: {
+          age_in_range: boolean
+          budget_overlap: boolean
+          budget_overlap_max: number
+          budget_overlap_min: number
+          candidate_age: number
+          compatibility_percentage: number
+          date_of_birth: string
+          distance_miles: number
+          distance_within_range: boolean
+          first_name: string
+          gender: Database["public"]["Enums"]["gender_type"]
+          home_available_from: string
+          home_bathrooms: number
+          home_bedrooms: number
+          home_city: string
+          home_id: string
+          home_rent: number
+          home_state: string
+          home_title: string
+          is_fallback: boolean
+          last_name: string
+          move_in_overlap_from: string
+          move_in_overlap_to: string
+          move_in_window_overlap: boolean
+          pets_preference_match: boolean
+          preferred_gender_match: boolean
+          profile_id: string
+          smoking_preference_match: boolean
+          username: string
+        }[]
+      }
       _postgis_deprecate: {
         Args: { newname: string; oldname: string; version: string }
         Returns: undefined
@@ -1348,6 +1414,8 @@ export type Database = {
     Enums: {
       gender_type: "male" | "female" | "non_binary" | "prefer_not_to_say"
       home_status: "active" | "archived"
+      interest_status: "pending" | "accepted" | "declined"
+      intent_type: "need_home" | "have_home"
       pets_type: "yes" | "no" | "depends"
       smoking_type: "yes" | "no" | "outside_only"
       user_status: "active" | "archived"
@@ -1491,6 +1559,8 @@ export const Constants = {
     Enums: {
       gender_type: ["male", "female", "non_binary", "prefer_not_to_say"],
       home_status: ["active", "archived"],
+      interest_status: ["pending", "accepted", "declined"],
+      intent_type: ["need_home", "have_home"],
       pets_type: ["yes", "no", "depends"],
       smoking_type: ["yes", "no", "outside_only"],
       user_status: ["active", "archived"],

@@ -49,6 +49,81 @@ using (
 );
 
 
+-- ============================================================
+-- PRIVATE CONTACT POLICIES
+-- ============================================================
+
+create policy "Owners and accepted matches can view private contacts"
+
+on public.profile_contacts
+
+for select
+
+to authenticated
+
+using (
+  (select auth.uid()) = profile_id
+  or exists (
+    select 1
+    from public.interests as interest
+    where interest.status = 'accepted'::public.interest_status
+      and (
+        (
+          interest.from_profile_id = profile_contacts.profile_id
+          and interest.to_profile_id = (select auth.uid())
+        )
+        or (
+          interest.to_profile_id = profile_contacts.profile_id
+          and interest.from_profile_id = (select auth.uid())
+        )
+      )
+  )
+);
+
+
+create policy "Users can create own private contacts"
+
+on public.profile_contacts
+
+for insert
+
+to authenticated
+
+with check (
+  (select auth.uid()) = profile_id
+);
+
+
+create policy "Users can update own private contacts"
+
+on public.profile_contacts
+
+for update
+
+to authenticated
+
+using (
+  (select auth.uid()) = profile_id
+)
+
+with check (
+  (select auth.uid()) = profile_id
+);
+
+
+create policy "Users can delete own private contacts"
+
+on public.profile_contacts
+
+for delete
+
+to authenticated
+
+using (
+  (select auth.uid()) = profile_id
+);
+
+
 
 -- ============================================================
 -- PREFERENCES POLICIES
@@ -434,3 +509,41 @@ using (
       and homes.owner_id = (select auth.uid())
   )
 );
+
+
+-- ============================================================
+-- DATA API PRIVILEGES
+-- ============================================================
+-- RLS controls which rows are visible. These grants make the tables
+-- reachable through the Data API in projects where new objects are not
+-- auto-exposed.
+
+grant usage on schema public to anon, authenticated;
+
+grant select
+on public.amenities,
+  public.home_amenities,
+  public.profile_photos,
+  public.home_photos
+to anon;
+
+grant select, update, delete
+on public.profiles
+to authenticated;
+
+grant select, update
+on public.preferences
+to authenticated;
+
+grant select, insert, update, delete
+on public.profile_contacts,
+  public.interests,
+  public.homes,
+  public.profile_photos,
+  public.home_photos,
+  public.home_amenities
+to authenticated;
+
+grant select
+on public.amenities
+to authenticated;

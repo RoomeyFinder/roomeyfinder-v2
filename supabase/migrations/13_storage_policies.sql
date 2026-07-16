@@ -42,3 +42,24 @@ using (
   and owner_id = (select auth.uid()::text)
   and (storage.foldername(name))[1] = (select auth.uid()::text)
 );
+
+
+create policy "Users can replace photos in their own folder"
+
+on storage.objects
+
+for update
+
+to authenticated
+
+using (
+  bucket_id in ('profile-photos', 'home-photos')
+  and owner_id = (select auth.uid()::text)
+  and (storage.foldername(name))[1] = (select auth.uid()::text)
+)
+
+with check (
+  bucket_id in ('profile-photos', 'home-photos')
+  and owner_id = (select auth.uid()::text)
+  and (storage.foldername(name))[1] = (select auth.uid()::text)
+);

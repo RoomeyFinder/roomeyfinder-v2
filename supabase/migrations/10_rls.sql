@@ -12,6 +12,10 @@ alter table public.preferences
 enable row level security;
 
 
+alter table public.profile_contacts
+enable row level security;
+
+
 alter table public.homes
 enable row level security;
 

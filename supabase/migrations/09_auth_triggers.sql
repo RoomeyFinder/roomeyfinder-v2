@@ -11,10 +11,39 @@ for each row
 execute procedure public.handle_updated_at();
 
 
+create trigger profile_contacts_updated_at
+before update on public.profile_contacts
+for each row
+execute procedure public.handle_updated_at();
+
+
 create trigger homes_updated_at
 before update on public.homes
 for each row
 execute procedure public.handle_updated_at();
+
+
+create or replace function public.prevent_user_verification_changes()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if new.is_verified is distinct from old.is_verified
+    and current_user not in ('postgres', 'service_role', 'supabase_admin') then
+    raise exception 'Only the system can change profile verification status';
+  end if;
+
+  return new;
+end;
+$$;
+
+revoke execute on function public.prevent_user_verification_changes() from public;
+
+create trigger profiles_prevent_user_verification_changes
+before update of is_verified on public.profiles
+for each row
+execute procedure public.prevent_user_verification_changes();
 
 
 -- A user with an active home is always eligible to match with home seekers.
