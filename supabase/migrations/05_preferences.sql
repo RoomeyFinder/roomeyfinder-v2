@@ -57,10 +57,16 @@ create table public.preferences (
 -- PROFILE INTERESTS
 -- ============================================================
 
+create type public.interest_status as enum (
+  'pending',
+  'accepted',
+  'declined'
+);
+
+
 create table public.interests (
 
   id uuid primary key default uuid_generate_v4(),
-
 
   from_profile_id uuid not null
     references public.profiles(id)
@@ -70,12 +76,24 @@ create table public.interests (
     references public.profiles(id)
     on delete cascade,
 
+  status public.interest_status default 'pending',
 
   created_at timestamptz default now(),
 
+  updated_at timestamptz default now(),
 
-  constraint interests_from_profile_id_to_profile_id_key
-    unique (from_profile_id, to_profile_id)
+  constraint interests_from_to_unique
+    unique(from_profile_id, to_profile_id),
+
+  constraint cannot_interest_self
+    check(from_profile_id <> to_profile_id)
 
 );
 
+
+create index interests_received_idx
+on public.interests(to_profile_id);
+
+
+create index interests_sent_idx
+on public.interests(from_profile_id);

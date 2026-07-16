@@ -35,8 +35,13 @@ create index home_amenities_amenity_id_idx
 on public.home_amenities(amenity_id);
 
 
-create index interests_to_profile_id_idx
+
+create index interests_received_idx
 on public.interests(to_profile_id);
+
+
+create index interests_sent_idx
+on public.interests(from_profile_id);
 
 -- ============================================================
 -- ONLY ONE ACTIVE HOME PER USER

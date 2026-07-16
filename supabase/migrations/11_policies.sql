@@ -116,6 +116,28 @@ with check (
 );
 
 
+create policy "Recipients can respond to pending interests"
+
+on public.interests
+
+for update
+
+to authenticated
+
+using (
+  (select auth.uid()) = to_profile_id
+  and status = 'pending'::public.interest_status
+)
+
+with check (
+  (select auth.uid()) = to_profile_id
+  and status in (
+    'accepted'::public.interest_status,
+    'declined'::public.interest_status
+  )
+);
+
+
 create policy "Users can delete their interests"
 
 on public.interests

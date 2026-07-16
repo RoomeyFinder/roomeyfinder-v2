@@ -33,3 +33,9 @@ create type public.user_status as enum (
   'active',
   'archived'
 );
+
+create type public.interest_status as enum (
+  'pending',
+  'accepted',
+  'declined'
+);
