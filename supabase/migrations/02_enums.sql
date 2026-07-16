@@ -9,6 +9,11 @@ create type public.gender_type as enum (
   'prefer_not_to_say'
 );
 
+create type public.intent_type as enum (
+  'need_home',
+  'have_home'
+);
+
 
 create type public.smoking_type as enum (
   'yes',
