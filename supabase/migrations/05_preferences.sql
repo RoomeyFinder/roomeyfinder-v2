@@ -53,3 +53,29 @@ create table public.preferences (
 );
 
 
+-- ============================================================
+-- PROFILE INTERESTS
+-- ============================================================
+
+create table public.interests (
+
+  id uuid primary key default uuid_generate_v4(),
+
+
+  from_profile_id uuid not null
+    references public.profiles(id)
+    on delete cascade,
+
+  to_profile_id uuid not null
+    references public.profiles(id)
+    on delete cascade,
+
+
+  created_at timestamptz default now(),
+
+
+  constraint interests_from_profile_id_to_profile_id_key
+    unique (from_profile_id, to_profile_id)
+
+);
+

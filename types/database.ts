@@ -85,6 +85,42 @@ export type Database = {
           },
         ]
       }
+      interests: {
+        Row: {
+          created_at: string | null
+          from_profile_id: string
+          id: string
+          to_profile_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          from_profile_id: string
+          id?: string
+          to_profile_id: string
+        }
+        Update: {
+          created_at?: string | null
+          from_profile_id?: string
+          id?: string
+          to_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interests_from_profile_id_fkey"
+            columns: ["from_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interests_to_profile_id_fkey"
+            columns: ["to_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       home_photos: {
         Row: {
           created_at: string | null
@@ -289,6 +325,8 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string | null
           date_of_birth: string | null
           first_name: string | null
@@ -305,6 +343,8 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string | null
           date_of_birth?: string | null
           first_name?: string | null
@@ -321,6 +361,8 @@ export type Database = {
         }
         Update: {
           bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string | null
           date_of_birth?: string | null
           first_name?: string | null
@@ -1452,4 +1494,3 @@ export const Constants = {
     },
   },
 } as const
-

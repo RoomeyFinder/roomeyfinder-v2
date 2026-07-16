@@ -26,6 +26,10 @@ create table public.profiles (
 
   bio text,
 
+  contact_phone text,
+
+  contact_email text,
+
   -- geographic location
   location geography(Point,4326),
 

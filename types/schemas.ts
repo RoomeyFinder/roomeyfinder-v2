@@ -101,6 +101,20 @@ export type UpdateHomeAmenity =
 
 /*
 |--------------------------------------------------------------------------
+| Interests
+|--------------------------------------------------------------------------
+*/
+
+export type Interest = Database["public"]["Tables"]["interests"]["Row"]
+
+export type NewInterest =
+  Database["public"]["Tables"]["interests"]["Insert"]
+
+export type UpdateInterest =
+  Database["public"]["Tables"]["interests"]["Update"]
+
+/*
+|--------------------------------------------------------------------------
 | Enums
 |--------------------------------------------------------------------------
 */

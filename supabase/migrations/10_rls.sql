@@ -26,3 +26,7 @@ enable row level security;
 
 alter table public.home_amenities
 enable row level security;
+
+
+alter table public.interests
+enable row level security;
