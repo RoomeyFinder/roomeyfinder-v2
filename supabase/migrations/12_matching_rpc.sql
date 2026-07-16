@@ -145,7 +145,7 @@ as $$
       case
         when pool.requester_location is not null
           and pool.candidate_location is not null
-        then public.st_distance(pool.requester_location, pool.candidate_location)
+        then gis.st_distance(pool.requester_location, pool.candidate_location)
       end as distance_meters
     from compatible_pool as pool
   ),

@@ -20,6 +20,12 @@ export type NewProfile = Database["public"]["Tables"]["profiles"]["Insert"]
 
 export type UpdateProfile = Database["public"]["Tables"]["profiles"]["Update"]
 
+export type ProfilePrivate =
+  Database["public"]["Tables"]["profile_private"]["Row"]
+
+export type UpdateProfilePrivate =
+  Database["public"]["Tables"]["profile_private"]["Update"]
+
 /*
 |--------------------------------------------------------------------------
 | Preferences
@@ -45,6 +51,11 @@ export type Home = Database["public"]["Tables"]["homes"]["Row"]
 export type NewHome = Database["public"]["Tables"]["homes"]["Insert"]
 
 export type UpdateHome = Database["public"]["Tables"]["homes"]["Update"]
+
+export type HomeAddress = Database["public"]["Tables"]["home_addresses"]["Row"]
+
+export type UpdateHomeAddress =
+  Database["public"]["Tables"]["home_addresses"]["Update"]
 
 /*
 |--------------------------------------------------------------------------

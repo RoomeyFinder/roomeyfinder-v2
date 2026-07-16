@@ -27,7 +27,7 @@ create table public.profiles (
   bio text,
 
   -- geographic location
-  location geography(Point,4326),
+  location gis.geography(Point,4326),
 
 
   -- discovery controls

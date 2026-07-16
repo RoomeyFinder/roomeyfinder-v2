@@ -18,7 +18,7 @@ create table public.homes (
   description text,
 
 
-  location geography(Point,4326),
+  location gis.geography(Point,4326),
 
 
   street text,
