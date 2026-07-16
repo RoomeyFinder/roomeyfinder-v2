@@ -9,6 +9,14 @@ export type Match = {
   last_name: string | null;
   date_of_birth: string | null;
   gender: "male" | "female" | "non_binary" | "prefer_not_to_say" | null;
+  home_id: string | null;
+  home_title: string | null;
+  home_city: string | null;
+  home_state: string | null;
+  home_rent: number | null;
+  home_bedrooms: number | null;
+  home_bathrooms: number | null;
+  home_available_from: string | null;
   candidate_age: number | null;
   budget_overlap: boolean | null;
   budget_overlap_min: number | null;
@@ -22,7 +30,7 @@ export type Match = {
   move_in_overlap_to: string | null;
   distance_within_range: boolean | null;
   distance_miles: number | null;
-  match_score: number | null;
+  compatibility_percentage: number;
   is_fallback: boolean;
 };
 
