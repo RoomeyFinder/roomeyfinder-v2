@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useLogin from "@/hooks/useLogin";
+import { TrustKeyHandover } from "@/assets/illustrations/trust-key-handover";
 
 export default function Login() {
   const {
@@ -19,8 +20,8 @@ export default function Login() {
     success,
   } = useLogin();
   return (
-    <div className="flex h-[60dvh] items-center justify-center">
-      <Card className="w-[90dvw] max-w-sm mx-auto">
+    <div className="mx-auto grid min-h-[70dvh] w-[90dvw] max-w-5xl items-start gap-10 content-center md:px-5 py-10 md:grid-cols-[380px_1fr]">
+      <Card className="mx-auto w-full max-w-sm md:w-full">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
         </CardHeader>
@@ -62,6 +63,13 @@ export default function Login() {
           </form>
         </CardContent>
       </Card>
+      <div className="hidden text-center md:block">
+        <div className="mx-auto max-w-lg overflow-hidden rounded-3xl border border-brand/10 bg-secondary/20">
+          <TrustKeyHandover />
+        </div>
+        <h1 className="mt-6 text-3xl font-semibold tracking-tight">A more trusted way to share a home.</h1>
+        <p className="mx-auto mt-3 max-w-md leading-7 text-muted-foreground">Sign in to continue finding compatible people and spaces with confidence.</p>
+      </div>
     </div>
   );
 }

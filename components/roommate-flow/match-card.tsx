@@ -63,7 +63,7 @@ export function MatchCard({
             </Badge>
           )}
           {match.home_rent ? (
-            <Badge variant="outline">₦{match.home_rent.toLocaleString()}/mo</Badge>
+            <Badge variant="outline">₦{match.home_rent.toLocaleString()}/year · entire home</Badge>
           ) : null}
         </div>
         <div className="mt-5 space-y-2 text-sm text-muted-foreground">

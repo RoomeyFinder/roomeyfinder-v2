@@ -57,7 +57,7 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
               </p>
             ) : null}
             <div>
-              <p className="mb-3 text-sm font-medium">Monthly budget (₦)</p>
+              <p className="mb-3 text-sm font-medium">Annual housing budget (₦)</p>
               <div className="grid gap-6 sm:grid-cols-2">
                 <Field label="Minimum" htmlFor="budget-min">
                   <Input

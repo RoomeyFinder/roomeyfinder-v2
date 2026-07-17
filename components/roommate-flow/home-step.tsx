@@ -298,7 +298,11 @@ function HomeForm({
               />
             </Field>
             <div className="grid gap-6 sm:grid-cols-2">
-              <Field label="Monthly rent (₦)" htmlFor="home-rent">
+              <Field
+                label="Annual rent for the entire home (₦)"
+                htmlFor="home-rent"
+                hint="Enter the total rent for the whole apartment or house for one year, not an individual room or person’s share."
+              >
                 <Input
                   id="home-rent"
                   required

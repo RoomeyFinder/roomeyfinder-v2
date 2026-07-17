@@ -86,6 +86,49 @@
     @apply min-h-screen bg-background text-foreground antialiased;
     overscroll-behavior: none;
   }
+
+  .cursor-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .cursor-backdrop__glow,
+  .cursor-backdrop__halo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 9999px;
+    transform: translate3d(-50%, -50%, 0);
+    will-change: transform;
+  }
+
+  .cursor-backdrop__glow {
+    width: 18rem;
+    height: 18rem;
+    background: hsl(var(--brand-main) / 0.07);
+    filter: blur(42px);
+  }
+
+  .cursor-backdrop__halo {
+    width: 34rem;
+    height: 34rem;
+    background: radial-gradient(
+      circle,
+      hsl(var(--brand-secondary) / 0.06) 0%,
+      hsl(var(--brand-main) / 0.025) 32%,
+      transparent 70%
+    );
+    filter: blur(18px);
+  }
+
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .cursor-backdrop {
+      display: none;
+    }
+  }
   ::selection {
     background: hsl(var(--brand-main));
     color: hsl(var(--brand-white));

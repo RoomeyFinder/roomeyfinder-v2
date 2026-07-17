@@ -1,4 +1,7 @@
 import { BrandLogo } from "./brand-logo";
+import { SmartMapDiscovery } from "@/assets/illustrations/smart-search-and-filter";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -13,6 +16,12 @@ export function Hero() {
           shared living space, or a homeowner looking for a compatible roommate, we&apos;ve got you
           covered.
         </p>
+      </div>
+      <Button asChild size="lg">
+        <Link href="/auth/login">Get started</Link>
+      </Button>
+      <div className="w-full max-w-xl overflow-hidden rounded-3xl border border-brand/10 bg-secondary/20 px-3 sm:px-8">
+        <SmartMapDiscovery />
       </div>
       <div className="my-4 h-px w-full bg-gradient-to-r from-transparent via-brand/25 to-transparent" />
     </div>

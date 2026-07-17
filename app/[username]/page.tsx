@@ -289,7 +289,10 @@ async function ProfileContent({
                       label="Location"
                       value={[home.city, home.state, home.country].filter(Boolean).join(", ")}
                     />
-                    <Field label="Rent" value={home.rent != null ? `${home.rent}` : null} />
+                    <Field
+                      label="Annual rent (entire home)"
+                      value={home.rent != null ? `₦${home.rent.toLocaleString()} / year` : null}
+                    />
                     <Field label="Bedrooms" value={home.bedrooms} />
                     <Field label="Bathrooms" value={home.bathrooms} />
                     <Field label="Available from" value={home.available_from} />

@@ -1,8 +1,14 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BadgeCheck, Home, Mail, MessageCircle, SlidersHorizontal, UserRound } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   {
@@ -46,8 +52,36 @@ const steps = [
 ];
 
 export function HowItWorks() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>(".how-step-card").forEach((card) => {
+        gsap.fromTo(
+          card,
+          { autoAlpha: 0, y: 28 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 88%",
+              end: "bottom 15%",
+              toggleActions: "play reverse play reverse",
+            },
+          },
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="how-it-works"
       aria-labelledby="how-it-works-title"
       className="scroll-mt-24 py-4 md:py-8"
@@ -76,7 +110,7 @@ export function HowItWorks() {
           return (
             <Card
               key={step.number}
-              className="h-full border-brand/10 shadow-none transition-colors hover:border-brand/30"
+              className="how-step-card h-full border-brand/10 shadow-none transition-colors hover:border-brand/30"
             >
               <CardHeader className="gap-5">
                 <div className="flex items-center justify-between">
