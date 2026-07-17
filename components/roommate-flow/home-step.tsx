@@ -237,198 +237,198 @@ function HomeForm({
           <form className="space-y-8" onSubmit={handleSubmit}>
             <fieldset disabled={saving} className="contents space-y-8">
               <Field label="Listing title" htmlFor="home-title">
-              <Input
-                id="home-title"
-                required
-                value={draft.title}
-                onChange={(event) => update("title", event.target.value)}
-                placeholder="Bright room in a 3-bed flat"
-              />
-            </Field>
-            <Field label="Tell people about the space" htmlFor="home-description">
-              <textarea
-                id="home-description"
-                required
-                rows={4}
-                className={textareaClass}
-                value={draft.description}
-                onChange={(event) => update("description", event.target.value)}
-                placeholder="What makes this home comfortable to share?"
-              />
-            </Field>
-            <LocationPicker
-              id="home-location"
-              label="Where is the home?"
-              hint="This is the location seekers will use when comparing distance. Your exact coordinates stay private."
-              required
-              value={draft.location}
-              onChange={(location) => update("location", location)}
-            />
-            <div className="grid gap-6 sm:grid-cols-2">
-              <Field label="City" htmlFor="home-city">
                 <Input
-                  id="home-city"
+                  id="home-title"
                   required
-                  value={draft.city}
-                  onChange={(event) => update("city", event.target.value)}
-                  placeholder="Lagos"
+                  value={draft.title}
+                  onChange={(event) => update("title", event.target.value)}
+                  placeholder="Bright room in a 3-bed flat"
                 />
               </Field>
-              <Field label="State" htmlFor="home-state">
-                <Input
-                  id="home-state"
+              <Field label="Tell people about the space" htmlFor="home-description">
+                <textarea
+                  id="home-description"
                   required
-                  value={draft.state}
-                  onChange={(event) => update("state", event.target.value)}
-                  placeholder="Lagos"
+                  rows={4}
+                  className={textareaClass}
+                  value={draft.description}
+                  onChange={(event) => update("description", event.target.value)}
+                  placeholder="What makes this home comfortable to share?"
                 />
               </Field>
-            </div>
-            <Field
-              label="Street / area"
-              htmlFor="home-street"
-              hint="Your exact address stays private until you publish and choose to share it."
-            >
-              <Input
-                id="home-street"
+              <LocationPicker
+                id="home-location"
+                label="Where is the home?"
+                hint="This is the location seekers will use when comparing distance. Your exact coordinates stay private."
                 required
-                value={draft.street}
-                onChange={(event) => update("street", event.target.value)}
-                placeholder="15 Example Street"
+                value={draft.location}
+                onChange={(location) => update("location", location)}
               />
-            </Field>
-            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label="City" htmlFor="home-city">
+                  <Input
+                    id="home-city"
+                    required
+                    value={draft.city}
+                    onChange={(event) => update("city", event.target.value)}
+                    placeholder="Lagos"
+                  />
+                </Field>
+                <Field label="State" htmlFor="home-state">
+                  <Input
+                    id="home-state"
+                    required
+                    value={draft.state}
+                    onChange={(event) => update("state", event.target.value)}
+                    placeholder="Lagos"
+                  />
+                </Field>
+              </div>
               <Field
-                label="Annual rent for the entire home (₦)"
-                htmlFor="home-rent"
-                hint="Enter the total rent for the whole apartment or house for one year, not an individual room or person’s share."
+                label="Street / area"
+                htmlFor="home-street"
+                hint="Your exact address stays private until you publish and choose to share it."
               >
                 <Input
-                  id="home-rent"
+                  id="home-street"
                   required
-                  type="number"
-                  min="1"
-                  value={draft.rent}
-                  onChange={(event) => update("rent", event.target.value)}
-                  placeholder="250000"
+                  value={draft.street}
+                  onChange={(event) => update("street", event.target.value)}
+                  placeholder="15 Example Street"
                 />
               </Field>
-              <Field label="Deposit (₦)" htmlFor="home-deposit" optional>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field
+                  label="Annual rent for the entire home (₦)"
+                  htmlFor="home-rent"
+                  hint="Enter the total rent for the whole apartment or house for one year, not an individual room or person’s share."
+                >
+                  <Input
+                    id="home-rent"
+                    required
+                    type="number"
+                    min="1"
+                    value={draft.rent}
+                    onChange={(event) => update("rent", event.target.value)}
+                    placeholder="250000"
+                  />
+                </Field>
+                <Field label="Deposit (₦)" htmlFor="home-deposit" optional>
+                  <Input
+                    id="home-deposit"
+                    type="number"
+                    min="0"
+                    value={draft.deposit}
+                    onChange={(event) => update("deposit", event.target.value)}
+                    placeholder="500000"
+                  />
+                </Field>
+                <Field label="Bedrooms" htmlFor="home-bedrooms">
+                  <Input
+                    id="home-bedrooms"
+                    required
+                    type="number"
+                    min="1"
+                    value={draft.bedrooms}
+                    onChange={(event) => update("bedrooms", event.target.value)}
+                  />
+                </Field>
+                <Field label="Bathrooms" htmlFor="home-bathrooms">
+                  <Input
+                    id="home-bathrooms"
+                    required
+                    type="number"
+                    min="1"
+                    value={draft.bathrooms}
+                    onChange={(event) => update("bathrooms", event.target.value)}
+                  />
+                </Field>
+              </div>
+              <Field label="Available from" htmlFor="available-from">
                 <Input
-                  id="home-deposit"
-                  type="number"
-                  min="0"
-                  value={draft.deposit}
-                  onChange={(event) => update("deposit", event.target.value)}
-                  placeholder="500000"
-                />
-              </Field>
-              <Field label="Bedrooms" htmlFor="home-bedrooms">
-                <Input
-                  id="home-bedrooms"
+                  id="available-from"
                   required
-                  type="number"
-                  min="1"
-                  value={draft.bedrooms}
-                  onChange={(event) => update("bedrooms", event.target.value)}
+                  type="date"
+                  value={draft.availableFrom}
+                  onChange={(event) => update("availableFrom", event.target.value)}
                 />
               </Field>
-              <Field label="Bathrooms" htmlFor="home-bathrooms">
-                <Input
-                  id="home-bathrooms"
-                  required
-                  type="number"
-                  min="1"
-                  value={draft.bathrooms}
-                  onChange={(event) => update("bathrooms", event.target.value)}
-                />
-              </Field>
-            </div>
-            <Field label="Available from" htmlFor="available-from">
-              <Input
-                id="available-from"
-                required
-                type="date"
-                value={draft.availableFrom}
-                onChange={(event) => update("availableFrom", event.target.value)}
-              />
-            </Field>
-            <Field
-              label="Home photos"
-              htmlFor="home-photos"
-              hint={`Add up to ${MAX_HOME_PHOTOS} photos in total. Your first photo becomes the cover.`}
-            >
-              {existingPhotos.length > 0 ? (
-                <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {existingPhotos.map((photo) => (
-                    <div
-                      key={photo.id}
-                      className="group relative overflow-hidden rounded-brand-md border bg-secondary/30"
-                    >
-                      <div className="relative aspect-[4/3] bg-muted">
-                        {photo.previewUrl ? (
-                          <Image
-                            src={photo.previewUrl}
-                            alt={photo.isPrimary ? "Primary home photo" : "Home photo"}
-                            fill
-                            sizes="(max-width: 640px) 50vw, 33vw"
-                            unoptimized
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center px-2 text-center text-xs text-muted-foreground">
-                            Preview unavailable
-                          </div>
-                        )}
-                      </div>
-                      {photo.isPrimary ? (
-                        <span className="absolute left-2 top-2 rounded-full bg-background/90 px-2 py-1 text-[10px] font-semibold text-brand">
-                          Cover
-                        </span>
-                      ) : null}
-                      <button
-                        type="button"
-                        disabled={saving}
-                        aria-label={`Delete ${photo.isPrimary ? "cover " : ""}home photo`}
-                        onClick={() => void onDeletePhoto(initialDraft?.id ?? "", photo)}
-                        className="absolute right-2 top-2 rounded-full bg-background/90 p-1.5 text-destructive shadow-sm transition-opacity hover:bg-destructive hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-              <label
+              <Field
+                label="Home photos"
                 htmlFor="home-photos"
-                className={`flex cursor-pointer flex-col items-center justify-center rounded-brand-md border border-dashed border-brand/40 bg-secondary/30 px-5 py-8 text-center hover:bg-secondary/60 ${canAddPhotos ? "" : "cursor-not-allowed opacity-60"}`}
+                hint={`Add up to ${MAX_HOME_PHOTOS} photos in total. Your first photo becomes the cover.`}
               >
-                <ImagePlus className="mb-2 h-5 w-5 text-brand" />
-                <span className="text-sm font-semibold">
-                  {canAddPhotos ? "Choose photos" : "Photo limit reached"}
-                </span>
-                <span className="mt-1 text-xs text-muted-foreground">
-                  {canAddPhotos
-                    ? `${remainingPhotoSlots} slot${remainingPhotoSlots === 1 ? "" : "s"} remaining`
-                    : `Maximum ${MAX_HOME_PHOTOS} photos`}
-                </span>
-                <input
-                  id="home-photos"
-                  type="file"
-                  accept="image/png,image/jpeg"
-                  multiple
-                  disabled={!canAddPhotos}
-                  className="sr-only"
-                  onChange={(event) => selectPhotos(event.target.files)}
-                />
-              </label>
-              {photos.length > 0 ? (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {photos.length} new photo{photos.length === 1 ? "" : "s"} selected:{" "}
-                  {photos.map((photo) => photo.name).join(", ")}
-                </p>
-              ) : null}
-            </Field>
+                {existingPhotos.length > 0 ? (
+                  <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {existingPhotos.map((photo) => (
+                      <div
+                        key={photo.id}
+                        className="group relative overflow-hidden rounded-brand-md border bg-secondary/30"
+                      >
+                        <div className="relative aspect-[4/3] bg-muted">
+                          {photo.previewUrl ? (
+                            <Image
+                              src={photo.previewUrl}
+                              alt={photo.isPrimary ? "Primary home photo" : "Home photo"}
+                              fill
+                              sizes="(max-width: 640px) 50vw, 33vw"
+                              unoptimized
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center px-2 text-center text-xs text-muted-foreground">
+                              Preview unavailable
+                            </div>
+                          )}
+                        </div>
+                        {photo.isPrimary ? (
+                          <span className="absolute left-2 top-2 rounded-full bg-background/90 px-2 py-1 text-[10px] font-semibold text-brand">
+                            Cover
+                          </span>
+                        ) : null}
+                        <button
+                          type="button"
+                          disabled={saving}
+                          aria-label={`Delete ${photo.isPrimary ? "cover " : ""}home photo`}
+                          onClick={() => void onDeletePhoto(initialDraft?.id ?? "", photo)}
+                          className="absolute right-2 top-2 rounded-full bg-background/90 p-1.5 text-destructive shadow-sm transition-opacity hover:bg-destructive hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                <label
+                  htmlFor="home-photos"
+                  className={`flex cursor-pointer flex-col items-center justify-center rounded-brand-md border border-dashed border-brand/40 bg-secondary/30 px-5 py-8 text-center hover:bg-secondary/60 ${canAddPhotos ? "" : "cursor-not-allowed opacity-60"}`}
+                >
+                  <ImagePlus className="mb-2 h-5 w-5 text-brand" />
+                  <span className="text-sm font-semibold">
+                    {canAddPhotos ? "Choose photos" : "Photo limit reached"}
+                  </span>
+                  <span className="mt-1 text-xs text-muted-foreground">
+                    {canAddPhotos
+                      ? `${remainingPhotoSlots} slot${remainingPhotoSlots === 1 ? "" : "s"} remaining`
+                      : `Maximum ${MAX_HOME_PHOTOS} photos`}
+                  </span>
+                  <input
+                    id="home-photos"
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    multiple
+                    disabled={!canAddPhotos}
+                    className="sr-only"
+                    onChange={(event) => selectPhotos(event.target.files)}
+                  />
+                </label>
+                {photos.length > 0 ? (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {photos.length} new photo{photos.length === 1 ? "" : "s"} selected:{" "}
+                    {photos.map((photo) => photo.name).join(", ")}
+                  </p>
+                ) : null}
+              </Field>
               <Button type="submit" className="w-full sm:w-auto">
                 {saving ? "Saving home..." : "Save home & continue"} <ArrowRight />
               </Button>

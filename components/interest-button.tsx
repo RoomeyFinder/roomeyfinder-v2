@@ -58,37 +58,79 @@ export function InterestButton({
   }
 
   if (status === "accepted") {
-    return <Button variant="outline" disabled><CheckCircle2 /> Connected</Button>;
+    return (
+      <Button variant="outline" disabled>
+        <CheckCircle2 /> Connected
+      </Button>
+    );
   }
   if (status === "pending") {
     if (isIncoming) {
       return (
-        <div className="flex flex-col  gap-1">
-          <div className="flex gap-2 justify-start">
-            <Button className="shrink-0" onClick={() => void respond("accepted")} disabled={sending}>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-start gap-2">
+            <Button
+              className="shrink-0"
+              onClick={() => void respond("accepted")}
+              disabled={sending}
+            >
               {sending ? <Loader2 className="animate-spin" /> : <CheckCircle2 />} Accept
             </Button>
-            <Button className="shrink-0" variant="outline" onClick={() => void respond("declined")} disabled={sending}>
+            <Button
+              className="shrink-0"
+              variant="outline"
+              onClick={() => void respond("declined")}
+              disabled={sending}
+            >
               Decline
             </Button>
           </div>
-          {error ? <p className="text-xs text-destructive" role="alert">{error}</p> : null}
+          {error ? (
+            <p className="text-xs text-destructive" role="alert">
+              {error}
+            </p>
+          ) : null}
         </div>
       );
     }
-    return <Button variant="outline" disabled>{isIncoming ? "Interest received" : "Interest sent"}</Button>;
+    return (
+      <Button variant="outline" disabled>
+        {isIncoming ? "Interest received" : "Interest sent"}
+      </Button>
+    );
   }
   if (status === "declined") {
-    return <Button variant="outline" disabled>Interest declined</Button>;
+    return (
+      <Button variant="outline" disabled>
+        Interest declined
+      </Button>
+    );
   }
-  if (isIncoming) return <Button variant="outline" disabled>Interest received</Button>;
+  if (isIncoming)
+    return (
+      <Button variant="outline" disabled>
+        Interest received
+      </Button>
+    );
 
   return (
     <div className="flex flex-col items-end gap-1">
       <Button onClick={() => void sendInterest()} disabled={sending}>
-        {sending ? <><Loader2 className="animate-spin" /> Sending interest…</> : <><Send /> Send interest</>}
+        {sending ? (
+          <>
+            <Loader2 className="animate-spin" /> Sending interest…
+          </>
+        ) : (
+          <>
+            <Send /> Send interest
+          </>
+        )}
       </Button>
-      {error ? <p className="text-xs text-destructive" role="alert">{error}</p> : null}
+      {error ? (
+        <p className="text-xs text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

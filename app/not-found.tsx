@@ -39,12 +39,10 @@ export default function Page() {
           </div>
 
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-brand">404</p>
-          <h1 className="max-w-md text-3xl font-semibold tracking-tight sm:text-4xl">
-            Oops...
-          </h1>
+          <h1 className="max-w-md text-3xl font-semibold tracking-tight sm:text-4xl">Oops...</h1>
           <p className="mt-4 max-w-md text-base leading-7 text-muted-foreground">
-            We couldn&apos;t find the page you were looking for. Let&apos;s get you back to discovering
-            a place that feels like home.
+            We couldn&apos;t find the page you were looking for. Let&apos;s get you back to
+            discovering a place that feels like home.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

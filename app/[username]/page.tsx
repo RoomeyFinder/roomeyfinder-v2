@@ -68,64 +68,74 @@ async function ProfileContent({
       .maybeSingle(),
     isOwner
       ? supabase
-        .from("profile_private")
-        .select("last_name, date_of_birth")
-        .eq("profile_id", profile.id)
-        .maybeSingle()
+          .from("profile_private")
+          .select("last_name, date_of_birth")
+          .eq("profile_id", profile.id)
+          .maybeSingle()
       : Promise.resolve({ data: null }),
     isOwner
       ? supabase
-        .from("preferences")
-        .select(
-          "max_distance_miles, budget_min, budget_max, move_in_from, move_in_to, preferred_gender, min_age, max_age, smoking_preference, pets_preference, match_with_home_seekers",
-        )
-        .eq("user_id", profile.id)
-        .maybeSingle()
+          .from("preferences")
+          .select(
+            "max_distance_miles, budget_min, budget_max, move_in_from, move_in_to, preferred_gender, min_age, max_age, smoking_preference, pets_preference, match_with_home_seekers",
+          )
+          .eq("user_id", profile.id)
+          .maybeSingle()
       : Promise.resolve({ data: null }),
-      supabase
-        .from("homes")
-        .select(
+    supabase
+      .from("homes")
+      .select(
         "id, title, description, city, state, country, rent, deposit, bedrooms, bathrooms, available_from, status",
-        )
+      )
       .eq("owner_id", profile.id)
       .order("updated_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
     !isOwner && viewerId
       ? supabase
-        .from("interests")
-        .select("id, status, from_profile_id")
-        .or(
-          `and(from_profile_id.eq.${viewerId},to_profile_id.eq.${profile.id}),and(from_profile_id.eq.${profile.id},to_profile_id.eq.${viewerId})`,
-        )
-        .order("created_at", { ascending: false })
-        .limit(1)
+          .from("interests")
+          .select("id, status, from_profile_id")
+          .or(
+            `and(from_profile_id.eq.${viewerId},to_profile_id.eq.${profile.id}),and(from_profile_id.eq.${profile.id},to_profile_id.eq.${viewerId})`,
+          )
+          .order("created_at", { ascending: false })
+          .limit(1)
       : Promise.resolve({ data: null }),
   ]);
   const existingInterest = existingInterestRows?.[0] ?? null;
   const isConnected = existingInterest?.status === "accepted";
-  const { data: connectedContacts } = isConnected && viewerId
-    ? await supabase.from("profile_contacts").select("profile_id, contact_email, contact_phone").in("profile_id", [viewerId, profile.id])
-    : { data: null };
+  const { data: connectedContacts } =
+    isConnected && viewerId
+      ? await supabase
+          .from("profile_contacts")
+          .select("profile_id, contact_email, contact_phone")
+          .in("profile_id", [viewerId, profile.id])
+      : { data: null };
   const { data: homePhotos } = home
     ? await supabase
-      .from("home_photos")
-      .select("id, storage_path, is_primary, position")
-      .eq("home_id", home.id)
-      .order("position", { ascending: true })
+        .from("home_photos")
+        .select("id, storage_path, is_primary, position")
+        .eq("home_id", home.id)
+        .order("position", { ascending: true })
     : { data: null };
   const homePhotoUrls = homePhotos
-    ? (await Promise.all(
-      homePhotos.map(async (homePhoto) => ({
-        ...homePhoto,
-        url: (await supabase.storage.from("home-photos").createSignedUrl(homePhoto.storage_path, 60 * 60))
-          .data?.signedUrl ?? null,
-      })),
-    )).filter((homePhoto) => homePhoto.url)
+    ? (
+        await Promise.all(
+          homePhotos.map(async (homePhoto) => ({
+            ...homePhoto,
+            url:
+              (
+                await supabase.storage
+                  .from("home-photos")
+                  .createSignedUrl(homePhoto.storage_path, 60 * 60)
+              ).data?.signedUrl ?? null,
+          })),
+        )
+      ).filter((homePhoto) => homePhoto.url)
     : [];
   const photoUrl = photo?.storage_path
     ? (await supabase.storage.from("profile-photos").createSignedUrl(photo.storage_path, 60 * 60))
-      .data?.signedUrl
+        .data?.signedUrl
     : null;
   const editHref = `/setup?step=${activeTab}`;
 
@@ -174,7 +184,13 @@ async function ProfileContent({
           ) : null}
         </div>
 
-        {isConnected ? <ConnectedDetails contacts={connectedContacts ?? []} viewerId={viewerId} profileId={profile.id} /> : null}
+        {isConnected ? (
+          <ConnectedDetails
+            contacts={connectedContacts ?? []}
+            viewerId={viewerId}
+            profileId={profile.id}
+          />
+        ) : null}
 
         <nav className="grid grid-cols-3 border-b" aria-label="Profile sections">
           {tabs.map(({ id, label, icon: Icon }) => (
@@ -316,7 +332,11 @@ function ConnectedDetails({
   viewerId,
   profileId,
 }: {
-  contacts: Array<{ profile_id: string; contact_email: string | null; contact_phone: string | null }>;
+  contacts: Array<{
+    profile_id: string;
+    contact_email: string | null;
+    contact_phone: string | null;
+  }>;
   viewerId: string | null;
   profileId: string;
 }) {
@@ -326,7 +346,9 @@ function ConnectedDetails({
   return (
     <div className="border-b bg-emerald-50/70 px-6 py-4 dark:bg-emerald-950/20">
       <p className="font-semibold text-emerald-800 dark:text-emerald-200">Connected profile</p>
-      <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-300">You both accepted this connection. Contact details are now visible to both of you.</p>
+      <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-300">
+        You both accepted this connection. Contact details are now visible to both of you.
+      </p>
       <div className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
         <ContactItem label="Your contact" contact={viewerContact} />
         <ContactItem label="Their contact" contact={otherContact} />
@@ -343,7 +365,12 @@ function ContactItem({
   contact: { contact_email: string | null; contact_phone: string | null } | undefined;
 }) {
   const value = contact?.contact_email ?? contact?.contact_phone;
-  return <div><p className="font-medium text-foreground">{label}</p><p className="break-all text-muted-foreground">{value ?? "No contact details added yet."}</p></div>;
+  return (
+    <div>
+      <p className="font-medium text-foreground">{label}</p>
+      <p className="break-all text-muted-foreground">{value ?? "No contact details added yet."}</p>
+    </div>
+  );
 }
 
 export default function ProfilePage({

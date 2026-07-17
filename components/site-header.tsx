@@ -55,12 +55,22 @@ async function SiteHeaderContent({ variant = "home" }: SiteHeaderProps) {
     if (userId) {
       const [{ data: profile }, { data: photo }] = await Promise.all([
         supabase.from("profiles").select("first_name, username").eq("id", userId).maybeSingle(),
-        supabase.from("profile_photos").select("storage_path").eq("user_id", userId).eq("is_primary", true).maybeSingle(),
+        supabase
+          .from("profile_photos")
+          .select("storage_path")
+          .eq("user_id", userId)
+          .eq("is_primary", true)
+          .maybeSingle(),
       ]);
       displayName = profile?.first_name || null;
       username = profile?.username || null;
       if (photo?.storage_path) {
-        avatarUrl = (await supabase.storage.from("profile-photos").createSignedUrl(photo.storage_path, 60 * 60)).data?.signedUrl ?? null;
+        avatarUrl =
+          (
+            await supabase.storage
+              .from("profile-photos")
+              .createSignedUrl(photo.storage_path, 60 * 60)
+          ).data?.signedUrl ?? null;
       }
     }
   }
@@ -75,9 +85,9 @@ async function SiteHeaderContent({ variant = "home" }: SiteHeaderProps) {
       showEnvWarning={showEnvWarning}
       showAuthButton={showAuthButton}
       isAuthenticated={isAuthenticated}
-    displayName={displayName}
-    username={username}
-    avatarUrl={avatarUrl}
+      displayName={displayName}
+      username={username}
+      avatarUrl={avatarUrl}
     />
   );
 }
@@ -105,8 +115,9 @@ function SiteHeaderLayout({
     <header className="w-full border-b border-b-foreground/10">
       <nav className="flex w-full justify-center">
         <div
-          className={`flex min-h-16 w-full items-center justify-between gap-6 p-3 px-5 text-sm ${isSetup ? "max-w-6xl" : "max-w-5xl"
-            }`}
+          className={`flex min-h-16 w-full items-center justify-between gap-6 p-3 px-5 text-sm ${
+            isSetup ? "max-w-6xl" : "max-w-5xl"
+          }`}
         >
           <div className="flex items-center gap-8 font-semibold">
             <Link
@@ -127,7 +138,11 @@ function SiteHeaderLayout({
           <div className="flex items-center gap-2">
             {showEnvWarning && <EnvVarWarning />}
             {showAuthButton && <AuthButton isAuthenticated={isAuthenticated} />}
-            {isAuthenticated ? <UserMenu displayName={displayName} username={username} avatarUrl={avatarUrl} /> : <ThemeSwitcher />}
+            {isAuthenticated ? (
+              <UserMenu displayName={displayName} username={username} avatarUrl={avatarUrl} />
+            ) : (
+              <ThemeSwitcher />
+            )}
           </div>
         </div>
       </nav>

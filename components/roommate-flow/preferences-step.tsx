@@ -49,116 +49,116 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
           <form className="space-y-8" onSubmit={handleSubmit}>
             <fieldset disabled={saving} className="contents space-y-8">
               {validationError ? (
-              <p
-                role="alert"
-                className="rounded-brand-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
-              >
-                {validationError}
-              </p>
-            ) : null}
-            <div>
-              <p className="mb-3 text-sm font-medium">Annual housing budget (₦)</p>
+                <p
+                  role="alert"
+                  className="rounded-brand-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+                >
+                  {validationError}
+                </p>
+              ) : null}
+              <div>
+                <p className="mb-3 text-sm font-medium">Annual housing budget (₦)</p>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <Field label="Minimum" htmlFor="budget-min">
+                    <Input
+                      id="budget-min"
+                      required
+                      type="number"
+                      min="0"
+                      value={draft.budgetMin}
+                      onChange={(event) => update("budgetMin", event.target.value)}
+                      placeholder="150000"
+                    />
+                  </Field>
+                  <Field label="Maximum" htmlFor="budget-max">
+                    <Input
+                      id="budget-max"
+                      required
+                      type="number"
+                      min="0"
+                      value={draft.budgetMax}
+                      onChange={(event) => update("budgetMax", event.target.value)}
+                      placeholder="300000"
+                    />
+                  </Field>
+                </div>
+              </div>
               <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Minimum" htmlFor="budget-min">
+                <Field label="Move in from" htmlFor="move-in-from">
                   <Input
-                    id="budget-min"
+                    id="move-in-from"
                     required
-                    type="number"
-                    min="0"
-                    value={draft.budgetMin}
-                    onChange={(event) => update("budgetMin", event.target.value)}
-                    placeholder="150000"
+                    type="date"
+                    min={today}
+                    max={draft.moveInTo || undefined}
+                    value={draft.moveInFrom}
+                    onChange={(event) => update("moveInFrom", event.target.value)}
                   />
                 </Field>
-                <Field label="Maximum" htmlFor="budget-max">
+                <Field label="Move in by" htmlFor="move-in-to">
                   <Input
-                    id="budget-max"
+                    id="move-in-to"
                     required
-                    type="number"
-                    min="0"
-                    value={draft.budgetMax}
-                    onChange={(event) => update("budgetMax", event.target.value)}
-                    placeholder="300000"
+                    type="date"
+                    min={draft.moveInFrom || today}
+                    value={draft.moveInTo}
+                    onChange={(event) => update("moveInTo", event.target.value)}
                   />
                 </Field>
               </div>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <Field label="Move in from" htmlFor="move-in-from">
-                <Input
-                  id="move-in-from"
-                  required
-                  type="date"
-                  min={today}
-                  max={draft.moveInTo || undefined}
-                  value={draft.moveInFrom}
-                  onChange={(event) => update("moveInFrom", event.target.value)}
-                />
+              <Field
+                label="Search radius"
+                htmlFor="distance"
+                hint="We'll prioritise people within this distance of your location."
+              >
+                <div className="flex items-center gap-3">
+                  <Input
+                    id="distance"
+                    required
+                    type="number"
+                    min="1"
+                    value={draft.maxDistanceMiles}
+                    onChange={(event) => update("maxDistanceMiles", event.target.value)}
+                  />
+                  <span className="shrink-0 text-sm text-muted-foreground">miles</span>
+                </div>
               </Field>
-              <Field label="Move in by" htmlFor="move-in-to">
-                <Input
-                  id="move-in-to"
-                  required
-                  type="date"
-                  min={draft.moveInFrom || today}
-                  value={draft.moveInTo}
-                  onChange={(event) => update("moveInTo", event.target.value)}
-                />
-              </Field>
-            </div>
-            <Field
-              label="Search radius"
-              htmlFor="distance"
-              hint="We'll prioritise people within this distance of your location."
-            >
-              <div className="flex items-center gap-3">
-                <Input
-                  id="distance"
-                  required
-                  type="number"
-                  min="1"
-                  value={draft.maxDistanceMiles}
-                  onChange={(event) => update("maxDistanceMiles", event.target.value)}
-                />
-                <span className="shrink-0 text-sm text-muted-foreground">miles</span>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label="Smoking at home" htmlFor="smoking">
+                  <select
+                    id="smoking"
+                    className={selectClass}
+                    value={draft.smokingPreference}
+                    onChange={(event) =>
+                      update(
+                        "smokingPreference",
+                        event.target.value as PreferenceDraft["smokingPreference"],
+                      )
+                    }
+                  >
+                    <option value="no">Non-smoking home</option>
+                    <option value="outside_only">Outside only</option>
+                    <option value="yes">Smoking is okay</option>
+                  </select>
+                </Field>
+                <Field label="Living with pets" htmlFor="pets">
+                  <select
+                    id="pets"
+                    className={selectClass}
+                    value={draft.petsPreference}
+                    onChange={(event) =>
+                      update(
+                        "petsPreference",
+                        event.target.value as PreferenceDraft["petsPreference"],
+                      )
+                    }
+                  >
+                    <option value="depends">Open to discussing</option>
+                    <option value="no">No pets</option>
+                    <option value="yes">Pet-friendly</option>
+                  </select>
+                </Field>
               </div>
-            </Field>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <Field label="Smoking at home" htmlFor="smoking">
-                <select
-                  id="smoking"
-                  className={selectClass}
-                  value={draft.smokingPreference}
-                  onChange={(event) =>
-                    update(
-                      "smokingPreference",
-                      event.target.value as PreferenceDraft["smokingPreference"],
-                    )
-                  }
-                >
-                  <option value="no">Non-smoking home</option>
-                  <option value="outside_only">Outside only</option>
-                  <option value="yes">Smoking is okay</option>
-                </select>
-              </Field>
-              <Field label="Living with pets" htmlFor="pets">
-                <select
-                  id="pets"
-                  className={selectClass}
-                  value={draft.petsPreference}
-                  onChange={(event) =>
-                    update(
-                      "petsPreference",
-                      event.target.value as PreferenceDraft["petsPreference"],
-                    )
-                  }
-                >
-                  <option value="depends">Open to discussing</option>
-                  <option value="no">No pets</option>
-                  <option value="yes">Pet-friendly</option>
-                </select>
-              </Field>
-            </div>
               <Button type="submit" className="w-full sm:w-auto">
                 {saving ? "Saving preferences..." : "Save & choose your home plan"} <ArrowRight />
               </Button>

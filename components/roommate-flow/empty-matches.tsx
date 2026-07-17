@@ -10,7 +10,10 @@ export function EmptyMatches({ choice }: { choice: HomeChoice }) {
   return (
     <Card className="mx-auto max-w-2xl text-center">
       <CardContent className="p-10">
-        <div className="mx-auto mb-2 max-w-md overflow-hidden rounded-2xl bg-secondary/30" aria-hidden="true">
+        <div
+          className="mx-auto mb-2 max-w-md overflow-hidden rounded-2xl bg-secondary/30"
+          aria-hidden="true"
+        >
           <RoommateMatchIllustration />
         </div>
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-brand">

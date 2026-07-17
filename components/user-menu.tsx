@@ -50,7 +50,10 @@ export function UserMenu({ displayName, username, avatarUrl }: UserMenuProps) {
             aria-hidden="true"
           >
             {avatarUrl ? (
-              <span className="h-full w-full bg-cover bg-center" style={{ backgroundImage: `url("${avatarUrl}")` }} />
+              <span
+                className="h-full w-full bg-cover bg-center"
+                style={{ backgroundImage: `url("${avatarUrl}")` }}
+              />
             ) : (
               <User size={17} />
             )}
@@ -72,13 +75,22 @@ export function UserMenu({ displayName, username, avatarUrl }: UserMenuProps) {
         <DropdownMenuLabel>Theme</DropdownMenuLabel>
         {mounted && (
           <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-            <DropdownMenuRadioItem value="light"><Sun size={15} /> Light</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="dark"><Moon size={15} /> Dark</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="system"><SunMoon size={15} /> System ({themeLabel})</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="light">
+              <Sun size={15} /> Light
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="dark">
+              <Moon size={15} /> Dark
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="system">
+              <SunMoon size={15} /> System ({themeLabel})
+            </DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => void logout()} className="text-destructive focus:text-destructive">
+        <DropdownMenuItem
+          onSelect={() => void logout()}
+          className="text-destructive focus:text-destructive"
+        >
           <LogOut size={15} /> Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -41,26 +41,32 @@ export function useOnboardingFlow(userId: string) {
     setError("");
     const supabase = createClient();
 
-    const [profileResult, privateResult, contactResult, preferenceResult, homesResult, profilePhotoResult] =
-      await Promise.all([
-        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-        supabase.from("profile_private").select("*").eq("profile_id", userId).maybeSingle(),
-        supabase.from("profile_contacts").select("*").eq("profile_id", userId).maybeSingle(),
-        supabase.from("preferences").select("*").eq("user_id", userId).maybeSingle(),
-        supabase
-          .from("homes")
-          .select("*")
-          .eq("owner_id", userId)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("profile_photos")
-          .select("id, storage_path, position, is_primary")
-          .eq("user_id", userId)
-          .order("is_primary", { ascending: false })
-          .order("position", { ascending: true })
-          .limit(1)
-          .maybeSingle(),
-      ]);
+    const [
+      profileResult,
+      privateResult,
+      contactResult,
+      preferenceResult,
+      homesResult,
+      profilePhotoResult,
+    ] = await Promise.all([
+      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+      supabase.from("profile_private").select("*").eq("profile_id", userId).maybeSingle(),
+      supabase.from("profile_contacts").select("*").eq("profile_id", userId).maybeSingle(),
+      supabase.from("preferences").select("*").eq("user_id", userId).maybeSingle(),
+      supabase
+        .from("homes")
+        .select("*")
+        .eq("owner_id", userId)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("profile_photos")
+        .select("id, storage_path, position, is_primary")
+        .eq("user_id", userId)
+        .order("is_primary", { ascending: false })
+        .order("position", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
     const homeIds = (homesResult.data ?? []).map((home) => home.id);
     const [homeAddressesResult, homePhotosResult] =
@@ -251,7 +257,9 @@ export function useOnboardingFlow(userId: string) {
         .single();
 
       if (contactResult.error) {
-        setError(getUserFacingDatabaseError(contactResult.error, "Unable to save your contact details."));
+        setError(
+          getUserFacingDatabaseError(contactResult.error, "Unable to save your contact details."),
+        );
         setSaving(false);
         return false;
       }

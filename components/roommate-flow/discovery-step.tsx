@@ -54,8 +54,18 @@ export function DiscoveryStep({
           ))}
           {discovery.hasMore ? (
             <div className="col-span-full flex justify-center pt-2">
-              <Button variant="outline" onClick={() => void discovery.loadMore()} disabled={discovery.loadingMore}>
-                {discovery.loadingMore ? <><Loader2 className="animate-spin" /> Loading more matches…</> : "Load more matches"}
+              <Button
+                variant="outline"
+                onClick={() => void discovery.loadMore()}
+                disabled={discovery.loadingMore}
+              >
+                {discovery.loadingMore ? (
+                  <>
+                    <Loader2 className="animate-spin" /> Loading more matches…
+                  </>
+                ) : (
+                  "Load more matches"
+                )}
               </Button>
             </div>
           ) : null}

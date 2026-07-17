@@ -110,7 +110,11 @@ export function useDiscovery(userId: string, enabled: boolean) {
         // interest state instead of reloading the entire discovery view.
         setInterests((current) => [...current, result.data]);
       } catch (interestError) {
-        setError(interestError instanceof Error ? interestError.message : "Unable to send interest. Please try again.");
+        setError(
+          interestError instanceof Error
+            ? interestError.message
+            : "Unable to send interest. Please try again.",
+        );
       } finally {
         setWorkingId(null);
       }

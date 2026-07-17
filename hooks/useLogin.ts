@@ -12,27 +12,30 @@ export default function useLogin() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
 
-  const handleSocialLogin = useCallback(async (provider: Provider) => {
-    const setProviderLoading = provider === "google" ? setGoogleLoading : setFacebookLoading;
-    const providerLoading = provider === "google" ? googleLoading : facebookLoading;
-    if (providerLoading) return;
+  const handleSocialLogin = useCallback(
+    async (provider: Provider) => {
+      const setProviderLoading = provider === "google" ? setGoogleLoading : setFacebookLoading;
+      const providerLoading = provider === "google" ? googleLoading : facebookLoading;
+      if (providerLoading) return;
 
-    setProviderLoading(true);
-    setError("");
-    setSuccess("");
+      setProviderLoading(true);
+      setError("");
+      setSuccess("");
 
-    const { error } = await createClient().auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/setup`,
-      },
-    });
+      const { error } = await createClient().auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/setup`,
+        },
+      });
 
-    if (error) {
-      setError(error.message);
-      setProviderLoading(false);
-    }
-  }, [facebookLoading, googleLoading]);
+      if (error) {
+        setError(error.message);
+        setProviderLoading(false);
+      }
+    },
+    [facebookLoading, googleLoading],
+  );
 
   const handleGoogleLogin = useCallback(() => handleSocialLogin("google"), [handleSocialLogin]);
   const handleFacebookLogin = useCallback(() => handleSocialLogin("facebook"), [handleSocialLogin]);

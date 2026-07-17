@@ -15,5 +15,5 @@ export default function MatchesRoute() {
 async function MatchesContent() {
   const { userId } = await requireAuthenticatedUser();
 
-  return < MatchesPage userId={userId} />;
+  return <MatchesPage userId={userId} />;
 }

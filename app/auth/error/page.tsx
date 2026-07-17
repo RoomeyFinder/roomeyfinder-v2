@@ -30,11 +30,13 @@ export default function Page({ searchParams }: { searchParams: Promise<{ error: 
               <Suspense>
                 <ErrorContent searchParams={searchParams} />
               </Suspense>
-              <Button className="mt-4" asChild><Link href="/">Return home</Link></Button>
+              <Button className="mt-4" asChild>
+                <Link href="/">Return home</Link>
+              </Button>
             </CardContent>
           </Card>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

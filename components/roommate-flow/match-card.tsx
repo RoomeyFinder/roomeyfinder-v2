@@ -1,6 +1,14 @@
 "use client";
 
-import { ArrowRight, CheckCircle2, Home, Loader2, MapPin, MessageCircle, Users } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Home,
+  Loader2,
+  MapPin,
+  MessageCircle,
+  Users,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -94,7 +102,15 @@ export function MatchCard({
               disabled={sending}
               onClick={() => void discovery.showInterest(match.profile_id)}
             >
-              {sending ? <><Loader2 className="animate-spin" /> Sending interest…</> : <>Show interest <ArrowRight /></>}
+              {sending ? (
+                <>
+                  <Loader2 className="animate-spin" /> Sending interest…
+                </>
+              ) : (
+                <>
+                  Show interest <ArrowRight />
+                </>
+              )}
             </Button>
           )}
         </div>

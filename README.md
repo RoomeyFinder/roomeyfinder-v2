@@ -1,116 +1,84 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# RoomeyFinder
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+RoomeyFinder helps people in Nigeria find compatible roommates and shared homes. Users create a profile, describe their living preferences, discover compatible matches, and connect only after mutual interest.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+The app is built with Next.js and Supabase, with privacy-conscious profile data, authenticated workflows, home listings, photo uploads, and database-backed matching.
 
 ## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+- Magic-link authentication with Supabase Auth
+- Guided profile, preference, and home setup flows
+- Roommate and shared-home discovery
+- Compatibility matching based on location, budget, lifestyle, and home preferences
+- Home listings with amenities, availability, and photos
+- Mutual-interest workflow before contact details are revealed
+- Private Supabase Storage buckets with access policies
+- Responsive UI, dark mode, custom illustrations, and reduced-motion-friendly animations
+- Local seed data and database tests for development
 
-## Demo
+## Tech stack
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+- Next.js App Router and React
+- TypeScript
+- Tailwind CSS
+- Supabase Auth, Postgres, Storage, and Row Level Security
+- GSAP for interface animation
+- Radix UI and Lucide React for accessible interface primitives
+- Geoapify for server-side location geocoding
 
-## Deploy to Vercel
+## Requirements
 
-Vercel deployment will guide you through creating a Supabase account and project.
+- Node.js 20 or newer
+- npm
+- A Supabase project for hosted development, or Docker and the Supabase CLI for local development
+- A Geoapify API key for the location search endpoint
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+## Getting started
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+Install dependencies:
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
-
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
-
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
-
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
-
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
-
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
-
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd with-supabase-app
-   ```
-
-4. Rename `.env.example` to `.env.local` and update the following:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
+```bash
+npm install
 ```
 
-> [!NOTE]
-> This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-> Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-> See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+Create a local environment file:
 
-Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+```bash
+cp .env.example .env.local
+```
 
-5. You can now run the Next.js local development server:
+Set the values in `.env.local`:
 
-   ```bash
-   npm run dev
-   ```
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
+GEOAPIFY_API_KEY=your-geoapify-api-key
+```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+The Supabase publishable/anon key is safe to expose in the browser when database access is protected by correct Row Level Security policies. Never expose a Supabase service-role key or other secret key through a `NEXT_PUBLIC_` variable.
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+Start the development server:
 
-### Seed a browser test environment
+```bash
+npm run dev
+```
 
-This project includes 48 deterministic local test accounts in `supabase/seed.sql`: 16 homeowners with active listings, 16 seekers open to seeker-to-seeker pairing, and 16 seekers looking only for homeowners. Their locations, budgets, ages, move-in windows, and lifestyle preferences overlap deliberately so the matching scores are easy to exercise.
+Open [http://localhost:3000](http://localhost:3000).
 
-Start Supabase and rebuild the local database with:
+## Local Supabase development
+
+The repository includes migrations, deterministic seed data, storage configuration, and database tests.
+
+Start the local Supabase stack and reset the database:
 
 ```bash
 npm run db:start
 npm run db:reset
 ```
 
-`db:reset` applies every migration and then runs the seed. It is safe to repeat; only accounts in the `seed.*@example.test` namespace are recreated by the seed. The normal Supabase local-development workflow is documented in the [seeding guide](https://supabase.com/docs/guides/local-development/seeding-your-database).
+The local Supabase email inbox is available at [http://localhost:54324](http://localhost:54324). Magic links generated during local development appear there instead of being sent externally.
 
-To sign in as a seeded account, request a magic link using one of the seeded emails, then open the link from the local Supabase email inbox at [http://localhost:54324](http://localhost:54324). Examples:
+The seed creates 48 test accounts across homeowner, roommate-pairing, and home-seeker scenarios. Example emails include:
 
 ```text
 seed.homeowner.01@example.test
@@ -118,22 +86,76 @@ seed.pair.17@example.test
 seed.home-seeker.33@example.test
 ```
 
-Use the homeowner account to test listings, the `pair` account to test seeker-to-seeker matches, and the `home-seeker` account to test homeowner-only matches. The seeded home photo rows satisfy publish validation, but do not contain uploaded image objects, so the UI may show `Preview unavailable` until a real photo is uploaded.
+Seed accounts use the local Supabase email flow. Use the inbox to open a magic link and complete the relevant user journey.
 
-Run the database tests with:
+Run the database and RLS/matching tests with:
 
 ```bash
 npm run test:db
 ```
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+## Available scripts
 
-## Feedback and issues
+| Command                | Purpose                                        |
+| ---------------------- | ---------------------------------------------- |
+| `npm run dev`          | Start the Next.js development server           |
+| `npm run build`        | Create a production build                      |
+| `npm run start`        | Serve the production build                     |
+| `npm run typecheck`    | Run TypeScript without emitting files          |
+| `npm run lint`         | Run ESLint                                     |
+| `npm run lint:fix`     | Apply ESLint fixes where possible              |
+| `npm run format`       | Format the repository with Prettier            |
+| `npm run format:check` | Verify Prettier formatting                     |
+| `npm run db:start`     | Start the local Supabase services              |
+| `npm run db:reset`     | Apply migrations and reseed the local database |
+| `npm run test:db`      | Run Supabase database tests                    |
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+Before opening a pull request or submitting a build, run:
 
-## More Supabase examples
+```bash
+npm run typecheck
+npm run lint
+npm run format:check
+npm run build
+npm run test:db
+```
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+## Project structure
+
+```text
+app/                    Next.js routes, layouts, auth, and API handlers
+components/             Reusable UI and roommate-flow components
+hooks/                  Client-side workflow and data hooks
+lib/                    Supabase clients, matching, validation, and utilities
+assets/illustrations/   React/SVG illustrations used by the product UI
+supabase/migrations/    Database schema, policies, functions, and storage rules
+supabase/tests/         Database and Row Level Security tests
+supabase/seed.sql       Deterministic local development data
+public/                 Static assets
+```
+
+## Security and privacy
+
+The application uses Supabase Row Level Security to limit access to user-owned and private records. Profile contact details are intended to become visible only after an interest is accepted. Profile and home photo buckets are private and are governed by Storage policies.
+
+Before deploying publicly, review the production Supabase policies and verify the complete auth, matching, interest, contact-reveal, and photo-access flows with non-seed accounts. Do not commit `.env.local` or production credentials.
+
+## Deployment
+
+The app can be deployed to Vercel or another Next.js-compatible host.
+
+Configure these production environment variables in the hosting provider:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+GEOAPIFY_API_KEY
+```
+
+Also configure the Supabase Auth site URL and redirect URLs for the deployed domain. Apply database migrations to the production project through the project’s normal Supabase migration workflow before enabling public traffic.
+
+## License
+
+This project is proprietary and all rights are reserved. You may not use, copy,
+modify, distribute, sublicense, or commercially exploit this code without
+prior written permission from RoomeyFinder.
