@@ -235,7 +235,8 @@ function HomeForm({
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <Field label="Listing title" htmlFor="home-title">
+            <fieldset disabled={saving} className="contents">
+              <Field label="Listing title" htmlFor="home-title">
               <Input
                 id="home-title"
                 required
@@ -424,9 +425,10 @@ function HomeForm({
                 </p>
               ) : null}
             </Field>
-            <Button type="submit" className="w-full sm:w-auto" disabled={saving}>
-              {saving ? "Saving home..." : "Save home & continue"} <ArrowRight />
-            </Button>
+              <Button type="submit" className="w-full sm:w-auto">
+                {saving ? "Saving home..." : "Save home & continue"} <ArrowRight />
+              </Button>
+            </fieldset>
           </form>
         </CardContent>
       </Card>

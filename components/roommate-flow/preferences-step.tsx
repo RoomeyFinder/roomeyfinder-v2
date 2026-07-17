@@ -47,7 +47,8 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {validationError ? (
+            <fieldset disabled={saving} className="contents">
+              {validationError ? (
               <p
                 role="alert"
                 className="rounded-brand-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
@@ -158,9 +159,10 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
                 </select>
               </Field>
             </div>
-            <Button type="submit" className="w-full sm:w-auto" disabled={saving}>
-              {saving ? "Saving preferences..." : "Save & choose your home plan"} <ArrowRight />
-            </Button>
+              <Button type="submit" className="w-full sm:w-auto">
+                {saving ? "Saving preferences..." : "Save & choose your home plan"} <ArrowRight />
+              </Button>
+            </fieldset>
           </form>
         </CardContent>
       </Card>

@@ -53,12 +53,13 @@ export function ProfileStep({ initialDraft, initialPhoto, onContinue, saving }: 
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <ProfilePhotoPicker
-              existingPhoto={initialPhoto}
-              selectedPhoto={draft.profilePhoto}
-              onSelect={selectProfilePhoto}
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
+            <fieldset disabled={saving} className="contents">
+              <ProfilePhotoPicker
+                existingPhoto={initialPhoto}
+                selectedPhoto={draft.profilePhoto}
+                onSelect={selectProfilePhoto}
+              />
+              <div className="grid gap-4 sm:grid-cols-2">
               <Field label="First name" htmlFor="first-name">
                 <Input
                   id="first-name"
@@ -107,7 +108,7 @@ export function ProfileStep({ initialDraft, initialPhoto, onContinue, saving }: 
                   }}
                 />
               </Field>
-            </div>
+              </div>
 
             <Field label="How should we refer to you?" htmlFor="gender">
               <select
@@ -156,13 +157,14 @@ export function ProfileStep({ initialDraft, initialPhoto, onContinue, saving }: 
               </div>
             </Field>
 
-            <Button
-              type="submit"
-              className="w-full sm:w-auto"
-              disabled={saving || draft.lifestyleTags.length === 0 || Boolean(birthDateError)}
-            >
-              {saving ? "Saving profile..." : "Save & continue"} <ArrowRight />
-            </Button>
+              <Button
+                type="submit"
+                className="w-full sm:w-auto"
+                disabled={draft.lifestyleTags.length === 0 || Boolean(birthDateError)}
+              >
+                {saving ? "Saving profile..." : "Save & continue"} <ArrowRight />
+              </Button>
+            </fieldset>
           </form>
         </CardContent>
       </Card>
