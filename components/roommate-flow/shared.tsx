@@ -74,8 +74,8 @@ export function NoteLine({ children }: { children: ReactNode }) {
   return <p className="flex items-start gap-2"><Check className="mt-1 h-3.5 w-3.5 shrink-0 text-emerald-600" /><span>{children}</span></p>;
 }
 
-export function Field({ label, htmlFor, hint, optional, children }: { label: string; htmlFor: string; hint?: string; optional?: boolean; children: ReactNode }) {
-  return <div className="grid gap-2"><Label htmlFor={htmlFor}>{label}{optional ? <span className="ml-1 font-normal text-muted-foreground">(optional)</span> : null}</Label>{children}{hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}</div>;
+export function Field({ label, htmlFor, hint, error, optional, children }: { label: string; htmlFor: string; hint?: string; error?: string; optional?: boolean; children: ReactNode }) {
+  return <div className="grid gap-2"><Label htmlFor={htmlFor}>{label}{optional ? <span className="ml-1 font-normal text-muted-foreground">(optional)</span> : null}</Label>{children}{error ? <p role="alert" className="text-xs text-destructive">{error}</p> : null}{hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}</div>;
 }
 
 export function ChoiceCard({ selected, icon: Icon, title, description, badge, onClick }: { selected: boolean; icon: LucideIcon; title: string; description: string; badge: string; onClick: () => void }) {

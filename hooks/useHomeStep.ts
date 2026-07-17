@@ -13,7 +13,7 @@ export function useHomeStep(initialTeamUp: boolean, onContinue: (choice: Exclude
 }
 
 export function useHomeForm(onContinue: (draft: HomeDraft) => Promise<boolean>) {
-  const [draft, setDraft] = useState<HomeDraft>({ title: "", description: "", city: "", state: "", country: "Nigeria", street: "", rent: "", deposit: "", bedrooms: "1", bathrooms: "1", availableFrom: "" });
+  const [draft, setDraft] = useState<HomeDraft>({ title: "", description: "", city: "", state: "", country: "Nigeria", street: "", rent: "", deposit: "", bedrooms: "1", bathrooms: "1", availableFrom: "", location: null });
   const [photos, setPhotos] = useState<string[]>([]);
   const update = useCallback(<K extends keyof HomeDraft>(key: K, value: HomeDraft[K]) => {
     setDraft((current) => ({ ...current, [key]: value }));

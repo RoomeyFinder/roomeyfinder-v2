@@ -43,7 +43,7 @@ export function RoommateFlow({ userId }: { userId: string }) {
     birthDate: flow.privateProfile?.date_of_birth ?? "",
     gender: flow.profile?.gender ?? "prefer_not_to_say",
     lifestyleTags: flow.profile?.bio ? lifestyleOptions.filter((option) => flow.profile?.bio?.toLowerCase().includes(option.value)).map((option) => option.value) : [],
-    city: "",
+    location: null,
   };
 
   const preferenceDraft: PreferenceDraft = {
@@ -56,7 +56,7 @@ export function RoommateFlow({ userId }: { userId: string }) {
     petsPreference: flow.preferences?.pets_preference ?? "depends",
   };
 
-  return <div className="mx-auto w-full max-w-6xl"><FlowHero /><FlowProgress current={flow.gate} gates={gateLabels} />{flow.error ? <div className="mt-6 rounded-brand-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">{flow.error}</div> : null}<div className="mt-8">{flow.gate === "profile" ? <ProfileStep initialDraft={profileDraft} onContinue={flow.saveProfile} onRequestLocation={flow.requestLocation} saving={flow.saving} locationReady={flow.locationReady} locationError={flow.locationError} /> : flow.gate === "preferences" ? <PreferencesStep initialDraft={preferenceDraft} onContinue={flow.savePreferences} saving={flow.saving} /> : <HomeStep initialTeamUp={flow.preferences?.match_with_home_seekers ?? false} saving={flow.saving} onContinue={continueAsSeeker} onSaveHome={saveHome} />}</div></div>;
+  return <div className="mx-auto w-full max-w-6xl"><FlowHero /><FlowProgress current={flow.gate} gates={gateLabels} />{flow.error ? <div className="mt-6 rounded-brand-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">{flow.error}</div> : null}<div className="mt-8">{flow.gate === "profile" ? <ProfileStep initialDraft={profileDraft} onContinue={flow.saveProfile} saving={flow.saving} /> : flow.gate === "preferences" ? <PreferencesStep initialDraft={preferenceDraft} onContinue={flow.savePreferences} saving={flow.saving} /> : <HomeStep initialTeamUp={flow.preferences?.match_with_home_seekers ?? false} saving={flow.saving} onContinue={continueAsSeeker} onSaveHome={saveHome} />}</div></div>;
 }
 
 function FlowHero() {

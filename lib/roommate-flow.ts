@@ -1,4 +1,5 @@
 import type { Home, Preference, Profile, ProfilePrivate } from "@/types/schemas";
+import type { LocationSelection } from "@/lib/location";
 
 export type HomeChoice = "homeowner" | "seeker" | "team_up";
 export type FlowGate = "profile" | "preferences" | "home" | "discover";
@@ -10,7 +11,7 @@ export type ProfileDraft = {
   birthDate: string;
   gender: "male" | "female" | "non_binary" | "prefer_not_to_say";
   lifestyleTags: string[];
-  city: string;
+  location: LocationSelection | null;
 };
 
 export type PreferenceDraft = {
@@ -35,6 +36,7 @@ export type HomeDraft = {
   bedrooms: string;
   bathrooms: string;
   availableFrom: string;
+  location: LocationSelection | null;
 };
 
 export function isProfileComplete(

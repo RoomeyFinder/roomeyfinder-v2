@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
+import { toPostgisPoint } from "@/lib/location";
+import { getUserFacingDatabaseError } from "@/lib/user-facing-errors";
 import {
   getFlowGate,
   getHomeChoice,
@@ -15,19 +17,15 @@ import {
 } from "@/lib/roommate-flow";
 import type { Home, Preference, Profile, ProfilePrivate } from "@/types/schemas";
 
-type Coordinates = { latitude: number; longitude: number };
-
 export function useOnboardingFlow(userId: string) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [privateProfile, setPrivateProfile] = useState<ProfilePrivate | null>(null);
   const [preferences, setPreferences] = useState<Preference | null>(null);
   const [homes, setHomes] = useState<Home[]>([]);
   const [storedChoice, setStoredChoice] = useState<HomeChoice | null>(null);
-  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [locationError, setLocationError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -84,42 +82,17 @@ export function useOnboardingFlow(userId: string) {
   const homeChoice = getHomeChoice(homes, storedChoice);
   const gate = getFlowGate({ profileComplete, preferencesComplete, homeChoice });
 
-  const requestLocation = useCallback(() => {
-    return new Promise<Coordinates | null>((resolve) => {
-      if (!navigator.geolocation) {
-        setLocationError("Location is not available in this browser.");
-        resolve(null);
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => {
-          const next = { latitude: coords.latitude, longitude: coords.longitude };
-          setCoordinates(next);
-          setLocationError("");
-          resolve(next);
-        },
-        () => {
-          setLocationError("Allow location access so we can find matches near you.");
-          resolve(null);
-        },
-        { enableHighAccuracy: false, timeout: 10000 },
-      );
-    });
-  }, []);
-
   const saveProfile = useCallback(
     async (draft: ProfileDraft) => {
       setSaving(true);
       setError("");
       const supabase = createClient();
-      let nextCoordinates = coordinates;
+      const location = draft.location
+        ? toPostgisPoint(draft.location)
+        : privateProfile?.location;
 
-      if (!nextCoordinates && !privateProfile?.location) {
-        nextCoordinates = await requestLocation();
-      }
-
-      if (!nextCoordinates && !privateProfile?.location) {
+      if (!location) {
+        setError("Choose an area or use your current location before continuing.");
         setSaving(false);
         return false;
       }
@@ -136,9 +109,6 @@ export function useOnboardingFlow(userId: string) {
         .select()
         .single();
 
-      const location = nextCoordinates
-        ? `SRID=4326;POINT(${nextCoordinates.longitude} ${nextCoordinates.latitude})`
-        : privateProfile?.location;
       const privateResult = await supabase
         .from("profile_private")
         .upsert(
@@ -146,7 +116,7 @@ export function useOnboardingFlow(userId: string) {
             profile_id: userId,
             last_name: draft.lastName.trim() || null,
             date_of_birth: draft.birthDate,
-            ...(location ? { location } : {}),
+            location,
           },
           { onConflict: "profile_id" },
         )
@@ -154,7 +124,12 @@ export function useOnboardingFlow(userId: string) {
         .single();
 
       if (profileResult.error || privateResult.error) {
-        setError(profileResult.error?.message ?? privateResult.error?.message ?? "Unable to save your profile.");
+        setError(
+          getUserFacingDatabaseError(
+            profileResult.error ?? privateResult.error,
+            "Unable to save your profile.",
+          ),
+        );
         setSaving(false);
         return false;
       }
@@ -177,7 +152,7 @@ export function useOnboardingFlow(userId: string) {
       setSaving(false);
       return true;
     },
-    [coordinates, privateProfile?.location, requestLocation, userId],
+    [privateProfile?.location, userId],
   );
 
   const savePreferences = useCallback(
@@ -245,6 +220,12 @@ export function useOnboardingFlow(userId: string) {
     async (draft: HomeDraft) => {
       setSaving(true);
       setError("");
+      if (!draft.location) {
+        setError("Choose the home location before saving this listing.");
+        setSaving(false);
+        return false;
+      }
+
       const supabase = createClient();
       const homeResult = await supabase
         .from("homes")
@@ -273,6 +254,7 @@ export function useOnboardingFlow(userId: string) {
 
       const addressResult = await supabase.from("home_addresses").insert({
         home_id: homeResult.data.id,
+        location: toPostgisPoint(draft.location),
         street: draft.street.trim() || null,
       });
 
@@ -311,9 +293,6 @@ export function useOnboardingFlow(userId: string) {
       loading,
       saving,
       error,
-      locationError,
-      locationReady: Boolean(coordinates || privateProfile?.location),
-      requestLocation,
       saveProfile,
       savePreferences,
       saveHomeChoice,
@@ -332,9 +311,6 @@ export function useOnboardingFlow(userId: string) {
       loading,
       saving,
       error,
-      locationError,
-      coordinates,
-      requestLocation,
       saveProfile,
       savePreferences,
       saveHomeChoice,
