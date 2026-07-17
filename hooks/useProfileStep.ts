@@ -4,7 +4,10 @@ import { useCallback, useState } from "react";
 
 import type { ProfileDraft } from "@/lib/roommate-flow";
 
-export function useProfileStep(initialDraft: ProfileDraft, onContinue: (draft: ProfileDraft) => Promise<boolean>) {
+export function useProfileStep(
+  initialDraft: ProfileDraft,
+  onContinue: (draft: ProfileDraft) => Promise<boolean>,
+) {
   const [draft, setDraft] = useState(initialDraft);
 
   const update = useCallback(<K extends keyof ProfileDraft>(key: K, value: ProfileDraft[K]) => {

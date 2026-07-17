@@ -447,7 +447,7 @@ export type Database = {
     }
     Functions: {
       get_matches: {
-        Args: { requesting_profile_id: string }
+        Args: { requesting_profile_id: string; result_limit: number; result_offset: number }
         Returns: {
           age_in_range: boolean
           budget_overlap: boolean

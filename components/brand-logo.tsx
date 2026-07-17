@@ -28,14 +28,7 @@ export function BrandLogo({
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
-      <Image
-        src="/images/logo.png"
-        alt=""
-        width={36}
-        height={35}
-        className="h-8 w-auto"
-        priority
-      />
+      <Image src="/images/logo.png" alt="" width={36} height={35} className="h-8 w-auto" priority />
       {showWordmark ? <BrandWordmark /> : null}
       <span className="sr-only">RoomeyFinder</span>
     </span>

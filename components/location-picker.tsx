@@ -6,11 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  requestCurrentLocation,
-  searchLocations,
-  type LocationSelection,
-} from "@/lib/location";
+import { requestCurrentLocation, searchLocations, type LocationSelection } from "@/lib/location";
 
 type LocationPickerProps = {
   id: string;

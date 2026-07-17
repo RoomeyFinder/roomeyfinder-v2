@@ -1,18 +1,6 @@
-import {
-  BadgeCheck,
-  Home,
-  Mail,
-  MessageCircle,
-  SlidersHorizontal,
-  UserRound,
-} from "lucide-react";
+import { BadgeCheck, Home, Mail, MessageCircle, SlidersHorizontal, UserRound } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -45,13 +33,15 @@ const steps = [
     number: "05",
     icon: BadgeCheck,
     title: "Get thoughtful matches",
-    description: "We rank compatible people and homes based on the role and preferences you choose.",
+    description:
+      "We rank compatible people and homes based on the role and preferences you choose.",
   },
   {
     number: "06",
     icon: MessageCircle,
     title: "Connect with confidence",
-    description: "Show interest, and contact details are revealed only when the interest is accepted.",
+    description:
+      "Show interest, and contact details are revealed only when the interest is accepted.",
   },
 ];
 
@@ -63,9 +53,7 @@ export function HowItWorks() {
       className="scroll-mt-24 py-4 md:py-8"
     >
       <div className="mb-10 max-w-2xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand">
-          How it works
-        </p>
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand">How it works</p>
         <h2
           id="how-it-works-title"
           className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl"
@@ -73,7 +61,8 @@ export function HowItWorks() {
           A better way to find the right fit.
         </h2>
         <p className="mt-3 text-base leading-7 text-muted-foreground">
-          Answer a few simple questions, and we&apos;ll match you with compatible roommates and spaces that fit your lifestyle.
+          Answer a few simple questions, and we&apos;ll match you with compatible roommates and
+          spaces that fit your lifestyle.
         </p>
         <Button asChild size="lg" className="mt-5">
           <Link href="/auth/login">Get started</Link>
@@ -107,6 +96,6 @@ export function HowItWorks() {
           );
         })}
       </div>
-    </section >
+    </section>
   );
 }

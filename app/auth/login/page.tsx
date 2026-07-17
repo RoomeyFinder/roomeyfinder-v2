@@ -1,21 +1,18 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useLogin from "@/hooks/useLogin";
 
-
 export default function Login() {
-  const { handleLogin, email, setEmail, loading, error, success } = useLogin()
+  const { handleLogin, email, setEmail, loading, error, success } = useLogin();
   return (
-    <div className="flex items-center justify-center w-screen h-[100dvh]">
+    <div className="flex h-[100dvh] w-screen items-center justify-center">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
+          <CardDescription>Enter your email below to login to your account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin}>
@@ -43,5 +40,5 @@ export default function Login() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

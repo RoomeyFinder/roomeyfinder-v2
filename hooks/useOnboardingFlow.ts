@@ -43,16 +43,8 @@ export function useOnboardingFlow(userId: string) {
     const [profileResult, privateResult, preferenceResult, homesResult, profilePhotoResult] =
       await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-        supabase
-          .from("profile_private")
-          .select("*")
-          .eq("profile_id", userId)
-          .maybeSingle(),
-        supabase
-          .from("preferences")
-          .select("*")
-          .eq("user_id", userId)
-          .maybeSingle(),
+        supabase.from("profile_private").select("*").eq("profile_id", userId).maybeSingle(),
+        supabase.from("preferences").select("*").eq("user_id", userId).maybeSingle(),
         supabase
           .from("homes")
           .select("*")
@@ -69,12 +61,23 @@ export function useOnboardingFlow(userId: string) {
       ]);
 
     const homeIds = (homesResult.data ?? []).map((home) => home.id);
-    const [homeAddressesResult, homePhotosResult] = homeIds.length > 0
-      ? await Promise.all([
-          supabase.from("home_addresses").select("home_id, street, location").in("home_id", homeIds),
-          supabase.from("home_photos").select("id, home_id, storage_path, position, is_primary").in("home_id", homeIds).order("position", { ascending: true }),
-        ])
-      : [{ data: [], error: null }, { data: [], error: null }];
+    const [homeAddressesResult, homePhotosResult] =
+      homeIds.length > 0
+        ? await Promise.all([
+            supabase
+              .from("home_addresses")
+              .select("home_id, street, location")
+              .in("home_id", homeIds),
+            supabase
+              .from("home_photos")
+              .select("id, home_id, storage_path, position, is_primary")
+              .in("home_id", homeIds)
+              .order("position", { ascending: true }),
+          ])
+        : [
+            { data: [], error: null },
+            { data: [], error: null },
+          ];
 
     const failed = [
       profileResult.error,
@@ -90,34 +93,55 @@ export function useOnboardingFlow(userId: string) {
     setProfile(profileResult.data);
     setPrivateProfile(privateResult.data);
     const profilePhotoUrl = profilePhotoResult.data
-      ? await supabase.storage.from("profile-photos").createSignedUrl(profilePhotoResult.data.storage_path, 60 * 60)
+      ? await supabase.storage
+          .from("profile-photos")
+          .createSignedUrl(profilePhotoResult.data.storage_path, 60 * 60)
       : null;
-    setProfilePhoto(profilePhotoResult.data ? {
-      id: profilePhotoResult.data.id,
-      storagePath: profilePhotoResult.data.storage_path,
-      previewUrl: profilePhotoUrl?.data?.signedUrl ?? null,
-    } : null);
+    setProfilePhoto(
+      profilePhotoResult.data
+        ? {
+            id: profilePhotoResult.data.id,
+            storagePath: profilePhotoResult.data.storage_path,
+            previewUrl: profilePhotoUrl?.data?.signedUrl ?? null,
+          }
+        : null,
+    );
     setPreferences(preferenceResult.data);
     setHomes(homesResult.data ?? []);
     const homeById = new Map((homesResult.data ?? []).map((home) => [home.id, home]));
-    setHomeAddresses(Object.fromEntries((homeAddressesResult.data ?? []).map((address) => {
-      const home = homeById.get(address.home_id);
-      const coordinates = fromPostgisPoint(address.location);
-      const location: LocationSelection | null = coordinates
-        ? { ...coordinates, label: [home?.city, home?.state].filter(Boolean).join(", ") || "Saved home location" }
-        : null;
-      return [address.home_id, { street: address.street ?? "", location }];
-    })));
-    const photoEntries = await Promise.all((homePhotosResult.data ?? []).map(async (photo) => {
-      const signedUrlResult = await supabase.storage.from("home-photos").createSignedUrl(photo.storage_path, 60 * 60);
-      return [photo.home_id, {
-        id: photo.id,
-        storagePath: photo.storage_path,
-        position: photo.position,
-        isPrimary: photo.is_primary,
-        previewUrl: signedUrlResult.data?.signedUrl ?? null,
-      } satisfies HomePhotoDraft] as const;
-    }));
+    setHomeAddresses(
+      Object.fromEntries(
+        (homeAddressesResult.data ?? []).map((address) => {
+          const home = homeById.get(address.home_id);
+          const coordinates = fromPostgisPoint(address.location);
+          const location: LocationSelection | null = coordinates
+            ? {
+                ...coordinates,
+                label:
+                  [home?.city, home?.state].filter(Boolean).join(", ") || "Saved home location",
+              }
+            : null;
+          return [address.home_id, { street: address.street ?? "", location }];
+        }),
+      ),
+    );
+    const photoEntries = await Promise.all(
+      (homePhotosResult.data ?? []).map(async (photo) => {
+        const signedUrlResult = await supabase.storage
+          .from("home-photos")
+          .createSignedUrl(photo.storage_path, 60 * 60);
+        return [
+          photo.home_id,
+          {
+            id: photo.id,
+            storagePath: photo.storage_path,
+            position: photo.position,
+            isPrimary: photo.is_primary,
+            previewUrl: signedUrlResult.data?.signedUrl ?? null,
+          } satisfies HomePhotoDraft,
+        ] as const;
+      }),
+    );
     const photosByHomeId: Record<string, HomePhotoDraft[]> = {};
     for (const [homeId, photo] of photoEntries) {
       photosByHomeId[homeId] = [...(photosByHomeId[homeId] ?? []), photo];
@@ -151,9 +175,7 @@ export function useOnboardingFlow(userId: string) {
       setSaving(true);
       setError("");
       const supabase = createClient();
-      const location = draft.location
-        ? toPostgisPoint(draft.location)
-        : privateProfile?.location;
+      const location = draft.location ? toPostgisPoint(draft.location) : privateProfile?.location;
 
       if (!location) {
         setError("Choose an area or use your current location before continuing.");
@@ -229,7 +251,12 @@ export function useOnboardingFlow(userId: string) {
 
         const safeName = draft.profilePhoto.name.replace(/[^a-zA-Z0-9._-]/g, "-");
         const storagePath = `${userId}/${crypto.randomUUID()}-${safeName}`;
-        const uploadResult = await supabase.storage.from("profile-photos").upload(storagePath, draft.profilePhoto, { contentType: draft.profilePhoto.type, upsert: false });
+        const uploadResult = await supabase.storage
+          .from("profile-photos")
+          .upload(storagePath, draft.profilePhoto, {
+            contentType: draft.profilePhoto.type,
+            upsert: false,
+          });
         if (uploadResult.error) {
           setError(uploadResult.error.message);
           setSaving(false);
@@ -237,8 +264,18 @@ export function useOnboardingFlow(userId: string) {
         }
 
         const savedPhotoResult = currentPhotoResult.data
-          ? await supabase.from("profile_photos").update({ storage_path: storagePath, position: 0, is_primary: true }).eq("id", currentPhotoResult.data.id).eq("user_id", userId).select().single()
-          : await supabase.from("profile_photos").insert({ user_id: userId, storage_path: storagePath, position: 0, is_primary: true }).select().single();
+          ? await supabase
+              .from("profile_photos")
+              .update({ storage_path: storagePath, position: 0, is_primary: true })
+              .eq("id", currentPhotoResult.data.id)
+              .eq("user_id", userId)
+              .select()
+              .single()
+          : await supabase
+              .from("profile_photos")
+              .insert({ user_id: userId, storage_path: storagePath, position: 0, is_primary: true })
+              .select()
+              .single();
 
         if (savedPhotoResult.error || !savedPhotoResult.data) {
           await supabase.storage.from("profile-photos").remove([storagePath]);
@@ -248,7 +285,9 @@ export function useOnboardingFlow(userId: string) {
         }
 
         if (currentPhotoResult.data?.storage_path) {
-          await supabase.storage.from("profile-photos").remove([currentPhotoResult.data.storage_path]);
+          await supabase.storage
+            .from("profile-photos")
+            .remove([currentPhotoResult.data.storage_path]);
         }
 
         setProfilePhoto({ id: savedPhotoResult.data.id, storagePath, previewUrl: null });
@@ -290,12 +329,7 @@ export function useOnboardingFlow(userId: string) {
         .single();
 
       if (result.error) {
-        setError(
-          getUserFacingDatabaseError(
-            result.error,
-            "Unable to save your preferences.",
-          ),
-        );
+        setError(getUserFacingDatabaseError(result.error, "Unable to save your preferences."));
         setSaving(false);
         return false;
       }
@@ -346,7 +380,9 @@ export function useOnboardingFlow(userId: string) {
         window.localStorage.setItem(`roomey-home-choice-${userId}`, choice);
       }
       setStoredChoice(choice);
-      setHomes((current) => current.map((home) => home.status === "active" ? { ...home, status: "archived" } : home));
+      setHomes((current) =>
+        current.map((home) => (home.status === "active" ? { ...home, status: "archived" } : home)),
+      );
       setPreferences(result.data);
       setSaving(false);
       return true;
@@ -378,8 +414,18 @@ export function useOnboardingFlow(userId: string) {
         available_from: draft.availableFrom,
       };
       const homeResult = draft.id
-        ? await supabase.from("homes").update(homeValues).eq("id", draft.id).eq("owner_id", userId).select().single()
-        : await supabase.from("homes").insert({ ...homeValues, owner_id: userId, status: "draft" }).select().single();
+        ? await supabase
+            .from("homes")
+            .update(homeValues)
+            .eq("id", draft.id)
+            .eq("owner_id", userId)
+            .select()
+            .single()
+        : await supabase
+            .from("homes")
+            .insert({ ...homeValues, owner_id: userId, status: "draft" })
+            .select()
+            .single();
 
       if (homeResult.error || !homeResult.data) {
         setError(homeResult.error?.message ?? "Unable to save this home.");
@@ -387,11 +433,14 @@ export function useOnboardingFlow(userId: string) {
         return false;
       }
 
-      const addressResult = await supabase.from("home_addresses").upsert({
-        home_id: homeResult.data.id,
-        location: toPostgisPoint(draft.location),
-        street: draft.street.trim() || null,
-      }, { onConflict: "home_id" });
+      const addressResult = await supabase.from("home_addresses").upsert(
+        {
+          home_id: homeResult.data.id,
+          location: toPostgisPoint(draft.location),
+          street: draft.street.trim() || null,
+        },
+        { onConflict: "home_id" },
+      );
 
       if (addressResult.error) {
         setError(addressResult.error.message);
@@ -420,7 +469,9 @@ export function useOnboardingFlow(userId: string) {
       for (const [index, photo] of draft.photos.entries()) {
         const safeName = photo.name.replace(/[^a-zA-Z0-9._-]/g, "-");
         const path = `${userId}/${homeResult.data.id}/${crypto.randomUUID()}-${safeName}`;
-        const uploadResult = await supabase.storage.from("home-photos").upload(path, photo, { contentType: photo.type, upsert: false });
+        const uploadResult = await supabase.storage
+          .from("home-photos")
+          .upload(path, photo, { contentType: photo.type, upsert: false });
         if (uploadResult.error) {
           setError(uploadResult.error.message);
           setSaving(false);
@@ -430,7 +481,9 @@ export function useOnboardingFlow(userId: string) {
           home_id: homeResult.data.id,
           storage_path: path,
           position: (existingPhotosResult.data?.length ?? 0) + index,
-          is_primary: !(existingPhotosResult.data ?? []).some((existing) => existing.is_primary) && index === 0,
+          is_primary:
+            !(existingPhotosResult.data ?? []).some((existing) => existing.is_primary) &&
+            index === 0,
         });
         if (photoResult.error) {
           setError(photoResult.error.message);
@@ -439,12 +492,23 @@ export function useOnboardingFlow(userId: string) {
         }
       }
 
-      const activationResult = homeResult.data.status === "active"
-        ? { data: homeResult.data, error: null }
-        : await supabase.from("homes").update({ status: "active" }).eq("id", homeResult.data.id).select().single();
+      const activationResult =
+        homeResult.data.status === "active"
+          ? { data: homeResult.data, error: null }
+          : await supabase
+              .from("homes")
+              .update({ status: "active" })
+              .eq("id", homeResult.data.id)
+              .select()
+              .single();
 
       if (activationResult.error || !activationResult.data) {
-        setError(getUserFacingDatabaseError(activationResult.error, "Complete the listing and add a primary photo before publishing it."));
+        setError(
+          getUserFacingDatabaseError(
+            activationResult.error,
+            "Complete the listing and add a primary photo before publishing it.",
+          ),
+        );
         setSaving(false);
         return false;
       }
@@ -462,8 +526,18 @@ export function useOnboardingFlow(userId: string) {
         return false;
       }
 
-      setHomes((current) => [activationResult.data, ...current.filter((home) => home.id !== activationResult.data.id).map((home) => home.status === "active" ? { ...home, status: "archived" as const } : home)]);
-      setHomeAddresses((current) => ({ ...current, [activationResult.data.id]: { street: draft.street.trim(), location: draft.location } }));
+      setHomes((current) => [
+        activationResult.data,
+        ...current
+          .filter((home) => home.id !== activationResult.data.id)
+          .map((home) =>
+            home.status === "active" ? { ...home, status: "archived" as const } : home,
+          ),
+      ]);
+      setHomeAddresses((current) => ({
+        ...current,
+        [activationResult.data.id]: { street: draft.street.trim(), location: draft.location },
+      }));
       setStoredChoice("homeowner");
       if (typeof window !== "undefined") {
         window.localStorage.setItem(`roomey-home-choice-${userId}`, "homeowner");
@@ -539,7 +613,11 @@ export function useOnboardingFlow(userId: string) {
         ...current,
         [homeId]: (current[homeId] ?? [])
           .filter((currentPhoto) => currentPhoto.id !== photo.id)
-          .map((currentPhoto) => replacement && currentPhoto.id === replacement.id ? { ...currentPhoto, isPrimary: true } : currentPhoto),
+          .map((currentPhoto) =>
+            replacement && currentPhoto.id === replacement.id
+              ? { ...currentPhoto, isPrimary: true }
+              : currentPhoto,
+          ),
       }));
       setSaving(false);
       return true;

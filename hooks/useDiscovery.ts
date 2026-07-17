@@ -7,10 +7,13 @@ import { getMatches, type Match } from "@/lib/matches";
 import type { Interest, ProfileContact } from "@/types/schemas";
 
 export function useDiscovery(userId: string, enabled: boolean) {
+  const pageSize = 12;
   const [matches, setMatches] = useState<Match[]>([]);
   const [interests, setInterests] = useState<Interest[]>([]);
   const [contacts, setContacts] = useState<Record<string, ProfileContact>>({});
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
   const [workingId, setWorkingId] = useState<string | null>(null);
 
@@ -22,7 +25,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
 
     try {
       const [matchData, outgoing, incoming] = await Promise.all([
-        getMatches(userId),
+        getMatches(userId, pageSize, 0),
         supabase.from("interests").select("*").eq("from_profile_id", userId),
         supabase.from("interests").select("*").eq("to_profile_id", userId),
       ]);
@@ -31,16 +34,11 @@ export function useDiscovery(userId: string, enabled: boolean) {
       const acceptedIds = interestData
         .filter((interest) => interest.status === "accepted")
         .map((interest) =>
-          interest.from_profile_id === userId
-            ? interest.to_profile_id
-            : interest.from_profile_id,
+          interest.from_profile_id === userId ? interest.to_profile_id : interest.from_profile_id,
         );
       const uniqueAcceptedIds = [...new Set(acceptedIds)];
       const contactResult = uniqueAcceptedIds.length
-        ? await supabase
-            .from("profile_contacts")
-            .select("*")
-            .in("profile_id", uniqueAcceptedIds)
+        ? await supabase.from("profile_contacts").select("*").in("profile_id", uniqueAcceptedIds)
         : { data: [], error: null };
 
       if (outgoing.error || incoming.error || contactResult.error) {
@@ -48,6 +46,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
       }
 
       setMatches(matchData);
+      setHasMore(matchData.length === pageSize);
       setInterests(interestData);
       setContacts(
         Object.fromEntries(
@@ -60,6 +59,21 @@ export function useDiscovery(userId: string, enabled: boolean) {
       setLoading(false);
     }
   }, [enabled, userId]);
+
+  const loadMore = useCallback(async () => {
+    if (!enabled || loading || loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    setError("");
+    try {
+      const nextMatches = await getMatches(userId, pageSize, matches.length);
+      setMatches((current) => [...current, ...nextMatches]);
+      setHasMore(nextMatches.length === pageSize);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Unable to load more matches.");
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [enabled, hasMore, loading, loadingMore, matches.length, userId]);
 
   useEffect(() => {
     void load();
@@ -80,16 +94,28 @@ export function useDiscovery(userId: string, enabled: boolean) {
       setWorkingId(candidateId);
       setError("");
       const supabase = createClient();
-      const result = await supabase.from("interests").insert({
-        from_profile_id: userId,
-        to_profile_id: candidateId,
-        status: "pending",
-      });
-      if (result.error) setError(result.error.message);
-      else await load();
-      setWorkingId(null);
+      try {
+        const result = await supabase
+          .from("interests")
+          .insert({
+            from_profile_id: userId,
+            to_profile_id: candidateId,
+            status: "pending",
+          })
+          .select()
+          .single();
+        if (result.error) throw result.error;
+
+        // Keep the existing match cards in place and update only this card's
+        // interest state instead of reloading the entire discovery view.
+        setInterests((current) => [...current, result.data]);
+      } catch (interestError) {
+        setError(interestError instanceof Error ? interestError.message : "Unable to send interest. Please try again.");
+      } finally {
+        setWorkingId(null);
+      }
     },
-    [load, userId],
+    [userId],
   );
 
   const respondToInterest = useCallback(
@@ -110,7 +136,35 @@ export function useDiscovery(userId: string, enabled: boolean) {
   );
 
   return useMemo(
-    () => ({ matches, interests, contacts, loading, error, workingId, interestFor, showInterest, respondToInterest, reload: load }),
-    [matches, interests, contacts, loading, error, workingId, interestFor, showInterest, respondToInterest, load],
+    () => ({
+      matches,
+      interests,
+      contacts,
+      loading,
+      loadingMore,
+      hasMore,
+      error,
+      workingId,
+      interestFor,
+      showInterest,
+      respondToInterest,
+      reload: load,
+      loadMore,
+    }),
+    [
+      matches,
+      interests,
+      contacts,
+      loading,
+      loadingMore,
+      hasMore,
+      error,
+      workingId,
+      interestFor,
+      showInterest,
+      respondToInterest,
+      load,
+      loadMore,
+    ],
   );
 }

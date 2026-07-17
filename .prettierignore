@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+coverage
+.git
+.agents
+.vercel
+supabase/.temp
+types/database.ts
+*.sql
+*.svg
+*.snap
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo

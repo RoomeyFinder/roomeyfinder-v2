@@ -1,8 +1,8 @@
-import type { NextConfig } from "next"
+import type { NextConfig } from "next";
 
 const supabaseRemotePattern = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL)
-  : null
+  : null;
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -14,6 +14,6 @@ const nextConfig: NextConfig = {
       ...(supabaseRemotePattern ? [supabaseRemotePattern] : []),
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

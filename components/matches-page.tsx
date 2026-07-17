@@ -28,5 +28,7 @@ export function MatchesPage({ userId }: { userId: string }) {
     );
   }
 
-  return <DiscoveryStep userId={userId} choice={flow.homeChoice ?? "seeker"} discovery={discovery} />;
+  return (
+    <DiscoveryStep userId={userId} choice={flow.homeChoice ?? "seeker"} discovery={discovery} />
+  );
 }

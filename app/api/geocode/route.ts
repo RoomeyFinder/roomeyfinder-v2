@@ -25,10 +25,7 @@ export async function GET(request: Request) {
 
   const apiKey = process.env.GEOAPIFY_API_KEY;
   if (!apiKey) {
-    return NextResponse.json(
-      { error: "Location search is not configured yet." },
-      { status: 503 },
-    );
+    return NextResponse.json({ error: "Location search is not configured yet." }, { status: 503 });
   }
 
   const params = new URLSearchParams({
@@ -62,8 +59,7 @@ export async function GET(request: Request) {
 
     const label =
       result.formatted ??
-      ([result.address_line1, result.address_line2].filter(Boolean).join(", ") ||
-        query);
+      ([result.address_line1, result.address_line2].filter(Boolean).join(", ") || query);
 
     return [
       {

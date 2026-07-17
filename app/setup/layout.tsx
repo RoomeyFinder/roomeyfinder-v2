@@ -1,18 +1,12 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
-export default function SetupLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SetupLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col items-center">
+    <main className="flex min-h-screen flex-col items-center">
+      <div className="flex w-full flex-1 flex-col items-center">
         <SiteHeader variant="setup" />
-        <div className="flex-1 w-full p-5 py-10 md:py-14">
-          {children}
-        </div>
+        <div className="w-full flex-1 p-5 py-10 md:py-14">{children}</div>
         <SiteFooter />
       </div>
     </main>

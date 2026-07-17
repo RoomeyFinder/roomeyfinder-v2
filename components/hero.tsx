@@ -9,9 +9,9 @@ export function Hero() {
           Find Your Perfect Match: Roommates and Spaces Tailored to You
         </h1>
         <p className="mx-auto max-w-2xl text-base leading-7 text-muted-foreground md:text-xl">
-          Whether you&apos;re a student searching for a cozy apartment, a
-          professional seeking a shared living space, or a homeowner looking for
-          a compatible roommate, we&apos;ve got you covered.
+          Whether you&apos;re a student searching for a cozy apartment, a professional seeking a
+          shared living space, or a homeowner looking for a compatible roommate, we&apos;ve got you
+          covered.
         </p>
       </div>
       <div className="my-4 h-px w-full bg-gradient-to-r from-transparent via-brand/25 to-transparent" />

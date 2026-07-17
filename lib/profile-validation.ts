@@ -24,8 +24,7 @@ export function getDateOfBirthError(value: string, today = new Date()) {
 
   let age = today.getFullYear() - year;
   const birthdayHasNotArrived =
-    today.getMonth() < month - 1 ||
-    (today.getMonth() === month - 1 && today.getDate() < day);
+    today.getMonth() < month - 1 || (today.getMonth() === month - 1 && today.getDate() < day);
   if (birthdayHasNotArrived) age -= 1;
 
   return age < MINIMUM_PROFILE_AGE

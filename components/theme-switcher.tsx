@@ -26,8 +26,7 @@ const ThemeSwitcher = () => {
   }
 
   const ICON_SIZE = 16;
-  const isDark =
-    theme === "dark" || (theme === "system" && resolvedTheme === "dark");
+  const isDark = theme === "dark" || (theme === "system" && resolvedTheme === "dark");
   const themeLabel = theme === "system" ? "System" : isDark ? "Dark" : "Light";
 
   return (
@@ -39,30 +38,20 @@ const ThemeSwitcher = () => {
           variant="ghost"
           size="sm"
         >
-          {isDark ? (
-            <Moon key="dark" size={ICON_SIZE} />
-          ) : (
-              <Sun key="light" size={ICON_SIZE} />
-          )}
+          {isDark ? <Moon key="dark" size={ICON_SIZE} /> : <Sun key="light" size={ICON_SIZE} />}
           <span className="hidden sm:block">{themeLabel}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-36" align="end">
-        <DropdownMenuRadioGroup
-          value={theme}
-          onValueChange={(e) => setTheme(e)}
-        >
+        <DropdownMenuRadioGroup value={theme} onValueChange={(e) => setTheme(e)}>
           <DropdownMenuRadioItem className="flex gap-2" value="light">
-            <Sun size={ICON_SIZE} className="text-muted-foreground" />{" "}
-            <span>Light</span>
+            <Sun size={ICON_SIZE} className="text-muted-foreground" /> <span>Light</span>
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem className="flex gap-2" value="dark">
-            <Moon size={ICON_SIZE} className="text-muted-foreground" />{" "}
-            <span>Dark</span>
+            <Moon size={ICON_SIZE} className="text-muted-foreground" /> <span>Dark</span>
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem className="flex gap-2" value="system">
-            <SunMoon size={ICON_SIZE} className="text-muted-foreground" />{" "}
-            <span>System</span>
+            <SunMoon size={ICON_SIZE} className="text-muted-foreground" /> <span>System</span>
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

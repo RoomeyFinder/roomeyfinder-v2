@@ -74,7 +74,13 @@ export function validatePreferenceDraft(draft: PreferenceDraft) {
   const budgetMax = Number(draft.budgetMax);
   const maxDistanceMiles = Number(draft.maxDistanceMiles);
 
-  if (!Number.isFinite(budgetMin) || !Number.isFinite(budgetMax) || budgetMin < 0 || budgetMax < 0 || budgetMin > budgetMax) {
+  if (
+    !Number.isFinite(budgetMin) ||
+    !Number.isFinite(budgetMax) ||
+    budgetMin < 0 ||
+    budgetMax < 0 ||
+    budgetMin > budgetMax
+  ) {
     return "Enter a valid budget range where the minimum is no greater than the maximum.";
   }
 
@@ -94,17 +100,14 @@ export function validatePreferenceDraft(draft: PreferenceDraft) {
   return null;
 }
 
-export function isProfileComplete(
-  profile: Profile | null,
-  privateProfile: ProfilePrivate | null,
-) {
+export function isProfileComplete(profile: Profile | null, privateProfile: ProfilePrivate | null) {
   return Boolean(
     profile?.username &&
-      profile.first_name &&
-      profile.gender &&
-      profile.bio &&
-      privateProfile?.date_of_birth &&
-      privateProfile.location,
+    profile.first_name &&
+    profile.gender &&
+    profile.bio &&
+    privateProfile?.date_of_birth &&
+    privateProfile.location,
   );
 }
 
@@ -113,15 +116,15 @@ export function isPreferencesComplete(preferences: Preference | null) {
 
   return Boolean(
     preferences?.budget_min != null &&
-      preferences.budget_max != null &&
-      preferences.max_distance_miles != null &&
-      preferences.move_in_from &&
-      preferences.move_in_to &&
-      preferences.move_in_from >= today &&
-      preferences.move_in_to >= today &&
-      preferences.move_in_from <= preferences.move_in_to &&
-      preferences.smoking_preference &&
-      preferences.pets_preference,
+    preferences.budget_max != null &&
+    preferences.max_distance_miles != null &&
+    preferences.move_in_from &&
+    preferences.move_in_to &&
+    preferences.move_in_from >= today &&
+    preferences.move_in_to >= today &&
+    preferences.move_in_from <= preferences.move_in_to &&
+    preferences.smoking_preference &&
+    preferences.pets_preference,
   );
 }
 

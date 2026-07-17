@@ -17,8 +17,7 @@ export const metadata: Metadata = {
     { url: "/icon.ico", sizes: "64x64" },
   ],
   openGraph: {
-    title:
-      "Find a Roommate | RoomeyFinder - Nigeria's #1 Roommate Matching Service",
+    title: "Find a Roommate | RoomeyFinder - Nigeria's #1 Roommate Matching Service",
     description: "We make finding your perfect living situation one less hassle.",
     url: brand.url,
     siteName: brand.name,

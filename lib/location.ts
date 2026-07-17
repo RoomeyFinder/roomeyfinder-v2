@@ -105,11 +105,11 @@ export function requestCurrentLocation(): Promise<Coordinates> {
           error.code === GeolocationPositionError.TIMEOUT)
       ) {
         retried = true;
-        navigator.geolocation.getCurrentPosition(
-          handleSuccess,
-          handleError,
-          { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 },
-        );
+        navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0,
+        });
         return;
       }
 
@@ -125,11 +125,11 @@ export function requestCurrentLocation(): Promise<Coordinates> {
       reject(new Error(message));
     }
 
-    navigator.geolocation.getCurrentPosition(
-      handleSuccess,
-      handleError,
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 },
-    );
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+      enableHighAccuracy: false,
+      timeout: 15000,
+      maximumAge: 300000,
+    });
   });
 }
 
