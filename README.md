@@ -96,6 +96,35 @@ If you wish to just develop locally and not deploy to Vercel, [follow the steps 
 
 6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
 
+### Seed a browser test environment
+
+This project includes 48 deterministic local test accounts in `supabase/seed.sql`: 16 homeowners with active listings, 16 seekers open to seeker-to-seeker pairing, and 16 seekers looking only for homeowners. Their locations, budgets, ages, move-in windows, and lifestyle preferences overlap deliberately so the matching scores are easy to exercise.
+
+Start Supabase and rebuild the local database with:
+
+```bash
+npm run db:start
+npm run db:reset
+```
+
+`db:reset` applies every migration and then runs the seed. It is safe to repeat; only accounts in the `seed.*@example.test` namespace are recreated by the seed. The normal Supabase local-development workflow is documented in the [seeding guide](https://supabase.com/docs/guides/local-development/seeding-your-database).
+
+To sign in as a seeded account, request a magic link using one of the seeded emails, then open the link from the local Supabase email inbox at [http://localhost:54324](http://localhost:54324). Examples:
+
+```text
+seed.homeowner.01@example.test
+seed.pair.17@example.test
+seed.home-seeker.33@example.test
+```
+
+Use the homeowner account to test listings, the `pair` account to test seeker-to-seeker matches, and the `home-seeker` account to test homeowner-only matches. The seeded home photo rows satisfy publish validation, but do not contain uploaded image objects, so the UI may show `Preview unavailable` until a real photo is uploaded.
+
+Run the database tests with:
+
+```bash
+npm run test:db
+```
+
 > Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
 
 ## Feedback and issues

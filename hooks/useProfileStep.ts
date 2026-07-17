@@ -20,7 +20,11 @@ export function useProfileStep(initialDraft: ProfileDraft, onContinue: (draft: P
     }));
   }, []);
 
+  const selectProfilePhoto = useCallback((photo: File | null) => {
+    setDraft((current) => ({ ...current, profilePhoto: photo }));
+  }, []);
+
   const submit = useCallback(async () => onContinue(draft), [draft, onContinue]);
 
-  return { draft, update, toggleTag, submit };
+  return { draft, update, toggleTag, selectProfilePhoto, submit };
 }

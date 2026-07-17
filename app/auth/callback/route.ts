@@ -3,7 +3,7 @@ import { type EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 function getSafeNextPath(next: string | null) {
-  return next?.startsWith("/") && !next.startsWith("//") ? next : "/protected";
+  return next?.startsWith("/") && !next.startsWith("//") ? next : "/setup";
 }
 
 function errorRedirect(request: NextRequest, message: string) {

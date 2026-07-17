@@ -12,7 +12,7 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone()
     url.pathname = "/auth/callback"
     if (!url.searchParams.has("next")) {
-      url.searchParams.set("next", "/protected")
+      url.searchParams.set("next", "/setup")
     }
 
     return NextResponse.redirect(url)

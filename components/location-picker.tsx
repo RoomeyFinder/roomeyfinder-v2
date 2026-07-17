@@ -36,6 +36,10 @@ export function LocationPicker({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setQuery(value?.label ?? "");
+  }, [value?.label]);
+
+  useEffect(() => {
     const trimmedQuery = query.trim();
     if (value || trimmedQuery.length < 2) {
       setResults([]);

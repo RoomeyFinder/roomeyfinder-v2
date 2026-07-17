@@ -28,6 +28,45 @@ export function toPostgisPoint(location: Coordinates) {
   return `SRID=4326;POINT(${location.longitude} ${location.latitude})`;
 }
 
+export function fromPostgisPoint(value: unknown): Coordinates | null {
+  if (value && typeof value === "object" && "coordinates" in value) {
+    const coordinates = (value as { coordinates?: unknown }).coordinates;
+    if (Array.isArray(coordinates) && coordinates.length >= 2) {
+      const longitude = Number(coordinates[0]);
+      const latitude = Number(coordinates[1]);
+      return isValidCoordinates({ latitude, longitude }) ? { latitude, longitude } : null;
+    }
+  }
+
+  if (typeof value === "string") {
+    const match = value.match(/POINT\s*\(\s*(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s*\)/i);
+    if (match) {
+      const longitude = Number(match[1]);
+      const latitude = Number(match[2]);
+      return isValidCoordinates({ latitude, longitude }) ? { latitude, longitude } : null;
+    }
+
+    if (/^[0-9a-f]+$/i.test(value) && value.length >= 50) {
+      try {
+        const bytes = new Uint8Array(value.match(/../g)!.map((pair) => Number.parseInt(pair, 16)));
+        const view = new DataView(bytes.buffer);
+        const littleEndian = bytes[0] === 1;
+        const type = view.getUint32(1, littleEndian);
+        const offset = (type & 0x20000000) !== 0 ? 9 : 5;
+        if ((type & 0xff) === 1) {
+          const longitude = view.getFloat64(offset, littleEndian);
+          const latitude = view.getFloat64(offset + 8, littleEndian);
+          return isValidCoordinates({ latitude, longitude }) ? { latitude, longitude } : null;
+        }
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
 export function requestCurrentLocation(): Promise<Coordinates> {
   return new Promise((resolve, reject) => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {

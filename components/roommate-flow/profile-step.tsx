@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowRight, Camera, Check, ShieldCheck, UserRound } from "lucide-react";
 
 import { LocationPicker } from "@/components/location-picker";
 import { Button } from "@/components/ui/button";
@@ -11,16 +11,18 @@ import { lifestyleOptions, selectClass } from "@/components/roommate-flow/consta
 import { useProfileStep } from "@/hooks/useProfileStep";
 import { getDateOfBirthError } from "@/lib/profile-validation";
 import type { ProfileDraft } from "@/lib/roommate-flow";
-import { useState } from "react";
+import type { ProfilePhotoDraft } from "@/lib/roommate-flow";
+import { useEffect, useState } from "react";
 
 type ProfileStepProps = {
   initialDraft: ProfileDraft;
+  initialPhoto: ProfilePhotoDraft | null;
   onContinue: (draft: ProfileDraft) => Promise<boolean>;
   saving: boolean;
 };
 
-export function ProfileStep({ initialDraft, onContinue, saving }: ProfileStepProps) {
-  const { draft, update, toggleTag, submit } = useProfileStep(initialDraft, onContinue);
+export function ProfileStep({ initialDraft, initialPhoto, onContinue, saving }: ProfileStepProps) {
+  const { draft, update, toggleTag, selectProfilePhoto, submit } = useProfileStep(initialDraft, onContinue);
   const [birthDateError, setBirthDateError] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -38,10 +40,11 @@ export function ProfileStep({ initialDraft, onContinue, saving }: ProfileStepPro
     <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
       <Card>
         <CardHeader>
-          <StepIntro eyebrow="Gate 1 of 3" title="Start with the real you" description="A few details help us introduce you to the right people. Your age and exact location are never shown publicly." icon={UserRound} />
+          <StepIntro eyebrow="Step 1 of 3" title="Start with the real you" description="A few details help us introduce you to the right people. Your age and exact location are never shown publicly." icon={UserRound} />
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <ProfilePhotoPicker existingPhoto={initialPhoto} selectedPhoto={draft.profilePhoto} onSelect={selectProfilePhoto} />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="First name" htmlFor="first-name"><Input id="first-name" required value={draft.firstName} onChange={(event) => update("firstName", event.target.value)} placeholder="Ada" /></Field>
               <Field label="Last name" htmlFor="last-name" optional><Input id="last-name" value={draft.lastName} onChange={(event) => update("lastName", event.target.value)} placeholder="Lovelace" /></Field>
@@ -50,7 +53,7 @@ export function ProfileStep({ initialDraft, onContinue, saving }: ProfileStepPro
             </div>
 
             <Field label="How should we refer to you?" htmlFor="gender">
-              <select id="gender" className={selectClass} value={draft.gender} onChange={(event) => update("gender", event.target.value as ProfileDraft["gender"]) }>
+              <select id="gender" className={selectClass} value={draft.gender} onChange={(event) => update("gender", event.target.value as ProfileDraft["gender"])}>
                 <option value="prefer_not_to_say">Prefer not to say</option><option value="female">Woman</option><option value="male">Man</option><option value="non_binary">Non-binary</option>
               </select>
             </Field>
@@ -75,4 +78,44 @@ export function ProfileStep({ initialDraft, onContinue, saving }: ProfileStepPro
       <SideNote title="Why we ask" icon={ShieldCheck}><p>Compatibility is more than a postcode. We use your habits, budget, and move-in window to make the shortlist feel useful.</p><div className="mt-5 space-y-3 text-sm"><NoteLine>Private details stay in your secure profile.</NoteLine><NoteLine>Exact addresses are never shown in discovery.</NoteLine><NoteLine>You control when you become visible to others.</NoteLine></div></SideNote>
     </div>
   );
+}
+
+function ProfilePhotoPicker({ existingPhoto, selectedPhoto, onSelect }: { existingPhoto: ProfilePhotoDraft | null; selectedPhoto: File | null; onSelect: (photo: File | null) => void }) {
+  const [error, setError] = useState("");
+  const [previewUrl, setPreviewUrl] = useState(existingPhoto?.previewUrl ?? null);
+
+  useEffect(() => {
+    if (!selectedPhoto) {
+      setPreviewUrl(existingPhoto?.previewUrl ?? null);
+      return;
+    }
+
+    const url = URL.createObjectURL(selectedPhoto);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [existingPhoto?.previewUrl, selectedPhoto]);
+
+  function handleSelect(file: File | undefined) {
+    setError("");
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Choose an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Profile images must be 5MB or smaller.");
+      return;
+    }
+    onSelect(file);
+  }
+
+  return <div className="flex flex-col items-center border-b pb-6 text-center">
+    <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-secondary bg-secondary text-brand shadow-sm">
+      {previewUrl ? <img src={previewUrl} alt="Profile preview" className="h-full w-full object-cover" /> : <UserRound className="m-auto h-12 w-12" />}
+      <label htmlFor="profile-photo" className="absolute inset-x-2 bottom-2 flex cursor-pointer items-center justify-center gap-1 rounded-full bg-background/95 px-2 py-1.5 text-xs font-semibold text-foreground shadow-sm hover:bg-background"><Camera className="h-3.5 w-3.5" /> <span<input id="profile-photo" type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => handleSelect(event.target.files?.[0])} /></label>
+    </div>
+    <p className="mt-3 text-sm font-semibold">Profile photo <span className="font-normal text-muted-foreground">(optional)</span></p>
+    <p className="mt-1 text-xs text-muted-foreground">A clear photo helps people recognize you. JPG, PNG, or WebP · up to 5MB.</p>
+    {error ? <p role="alert" className="mt-2 text-xs text-destructive">{error}</p> : null}
+  </div>;
 }

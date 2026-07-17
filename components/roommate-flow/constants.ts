@@ -1,4 +1,4 @@
-import { Home, Search, Settings2, UserRound } from "lucide-react";
+import { Home, Settings2, UserRound } from "lucide-react";
 
 export const lifestyleOptions = [
   { label: "Clean & tidy", value: "clean" },
@@ -9,12 +9,13 @@ export const lifestyleOptions = [
   { label: "Pet friendly", value: "pet friendly" },
 ] as const;
 
-export const gateLabels = [
+export const setupSteps = [
   { id: "profile", label: "Your profile", icon: UserRound },
   { id: "preferences", label: "Your preferences", icon: Settings2 },
   { id: "home", label: "Your home plan", icon: Home },
-  { id: "discover", label: "Your matches", icon: Search },
 ] as const;
+
+export const MAX_HOME_PHOTOS = 5;
 
 export const selectClass =
   "flex h-11 w-full rounded-brand-md border border-input bg-background px-4 py-2 text-sm shadow-sm outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-ring";

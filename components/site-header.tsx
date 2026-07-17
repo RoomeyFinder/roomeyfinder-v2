@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { hasEnvVars, isProduction } from "@/lib/utils";
 
 type SiteHeaderProps = {
-  variant?: "home" | "protected";
+  variant?: "home" | "setup";
 };
 
 export function SiteHeader({ variant = "home" }: SiteHeaderProps) {
@@ -21,13 +21,13 @@ export function SiteHeader({ variant = "home" }: SiteHeaderProps) {
 }
 
 function SiteHeaderFallback({ variant }: SiteHeaderProps) {
-  const isProtected = variant === "protected";
-  const showEnvWarning = !hasEnvVars && (isProtected || !isProduction);
-  const showAuthButton = !isProtected || Boolean(hasEnvVars);
+  const isSetup = variant === "setup";
+  const showEnvWarning = !hasEnvVars && (isSetup || !isProduction);
+  const showAuthButton = !isSetup || Boolean(hasEnvVars);
 
   return (
     <SiteHeaderLayout
-      isProtected={isProtected}
+      isSetup={isSetup}
       discoverHref="/auth/login"
       showEnvWarning={showEnvWarning}
       showAuthButton={showAuthButton}
@@ -37,7 +37,7 @@ function SiteHeaderFallback({ variant }: SiteHeaderProps) {
 }
 
 async function SiteHeaderContent({ variant = "home" }: SiteHeaderProps) {
-  const isProtected = variant === "protected";
+  const isSetup = variant === "setup";
   let isAuthenticated = false;
 
   if (hasEnvVars) {
@@ -47,12 +47,12 @@ async function SiteHeaderContent({ variant = "home" }: SiteHeaderProps) {
   }
 
   const showEnvWarning =
-    !hasEnvVars && (isProtected || !isProduction);
-  const showAuthButton = !isProtected || Boolean(hasEnvVars);
+    !hasEnvVars && (isSetup || !isProduction);
+  const showAuthButton = !isSetup || Boolean(hasEnvVars);
 
   return (
     <SiteHeaderLayout
-      isProtected={isProtected}
+      isSetup={isSetup}
       discoverHref={isAuthenticated ? "/matches" : "/auth/login"}
       showEnvWarning={showEnvWarning}
       showAuthButton={showAuthButton}
@@ -62,13 +62,13 @@ async function SiteHeaderContent({ variant = "home" }: SiteHeaderProps) {
 }
 
 function SiteHeaderLayout({
-  isProtected,
+  isSetup,
   discoverHref,
   showEnvWarning,
   showAuthButton,
   isAuthenticated,
 }: {
-  isProtected: boolean;
+  isSetup: boolean;
   discoverHref: string;
   showEnvWarning: boolean;
   showAuthButton: boolean;
@@ -79,7 +79,7 @@ function SiteHeaderLayout({
       <nav className="flex w-full justify-center">
         <div
           className={`flex min-h-16 w-full items-center justify-between gap-6 p-3 px-5 text-sm ${
-            isProtected ? "max-w-6xl" : "max-w-5xl"
+            isSetup ? "max-w-6xl" : "max-w-5xl"
           }`}
         >
           <div className="flex items-center gap-8 font-semibold">
