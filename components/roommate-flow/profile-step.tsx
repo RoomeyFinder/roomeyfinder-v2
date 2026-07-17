@@ -110,6 +110,22 @@ export function ProfileStep({ initialDraft, initialPhoto, onContinue, saving }: 
               </Field>
               </div>
 
+              <Field
+                label="Phone number"
+                htmlFor="contact-phone"
+                hint="Shared only after you accept an interest."
+              >
+                <Input
+                  id="contact-phone"
+                  required
+                  type="tel"
+                  autoComplete="tel"
+                  value={draft.contactPhone}
+                  onChange={(event) => update("contactPhone", event.target.value)}
+                  placeholder="08012345678"
+                />
+              </Field>
+
             <Field label="How should we refer to you?" htmlFor="gender">
               <select
                 id="gender"

@@ -1,4 +1,4 @@
-import type { Home, Preference, Profile, ProfilePrivate } from "@/types/schemas";
+import type { Home, Preference, Profile, ProfileContact, ProfilePrivate } from "@/types/schemas";
 import type { LocationSelection } from "@/lib/location";
 
 export type HomeChoice = "homeowner" | "seeker" | "team_up";
@@ -7,6 +7,7 @@ export type FlowGate = "profile" | "preferences" | "home" | "discover";
 export type ProfileDraft = {
   firstName: string;
   lastName: string;
+  contactPhone: string;
   username: string;
   birthDate: string;
   gender: "male" | "female" | "non_binary" | "prefer_not_to_say";
@@ -100,14 +101,19 @@ export function validatePreferenceDraft(draft: PreferenceDraft) {
   return null;
 }
 
-export function isProfileComplete(profile: Profile | null, privateProfile: ProfilePrivate | null) {
+export function isProfileComplete(
+  profile: Profile | null,
+  privateProfile: ProfilePrivate | null,
+  profileContact: ProfileContact | null,
+) {
   return Boolean(
     profile?.username &&
     profile.first_name &&
     profile.gender &&
     profile.bio &&
     privateProfile?.date_of_birth &&
-    privateProfile.location,
+    privateProfile.location &&
+    profileContact?.contact_phone,
   );
 }
 

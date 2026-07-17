@@ -20,11 +20,12 @@ import {
   type ProfilePhotoDraft,
   type ProfileDraft,
 } from "@/lib/roommate-flow";
-import type { Home, Preference, Profile, ProfilePrivate } from "@/types/schemas";
+import type { Home, Preference, Profile, ProfileContact, ProfilePrivate } from "@/types/schemas";
 
 export function useOnboardingFlow(userId: string) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [privateProfile, setPrivateProfile] = useState<ProfilePrivate | null>(null);
+  const [profileContact, setProfileContact] = useState<ProfileContact | null>(null);
   const [profilePhoto, setProfilePhoto] = useState<ProfilePhotoDraft | null>(null);
   const [preferences, setPreferences] = useState<Preference | null>(null);
   const [homes, setHomes] = useState<Home[]>([]);
@@ -40,10 +41,11 @@ export function useOnboardingFlow(userId: string) {
     setError("");
     const supabase = createClient();
 
-    const [profileResult, privateResult, preferenceResult, homesResult, profilePhotoResult] =
+    const [profileResult, privateResult, contactResult, preferenceResult, homesResult, profilePhotoResult] =
       await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabase.from("profile_private").select("*").eq("profile_id", userId).maybeSingle(),
+        supabase.from("profile_contacts").select("*").eq("profile_id", userId).maybeSingle(),
         supabase.from("preferences").select("*").eq("user_id", userId).maybeSingle(),
         supabase
           .from("homes")
@@ -82,6 +84,7 @@ export function useOnboardingFlow(userId: string) {
     const failed = [
       profileResult.error,
       privateResult.error,
+      contactResult.error,
       preferenceResult.error,
       homesResult.error,
       profilePhotoResult.error,
@@ -92,6 +95,7 @@ export function useOnboardingFlow(userId: string) {
     if (failed) setError(failed.message);
     setProfile(profileResult.data);
     setPrivateProfile(privateResult.data);
+    setProfileContact(contactResult.data);
     const profilePhotoUrl = profilePhotoResult.data
       ? await supabase.storage
           .from("profile-photos")
@@ -165,7 +169,7 @@ export function useOnboardingFlow(userId: string) {
     void load();
   }, [load]);
 
-  const profileComplete = isProfileComplete(profile, privateProfile);
+  const profileComplete = isProfileComplete(profile, privateProfile, profileContact);
   const preferencesComplete = isPreferencesComplete(preferences);
   const homeChoice = getHomeChoice(homes, storedChoice);
   const gate = getFlowGate({ profileComplete, preferencesComplete, homeChoice });
@@ -179,6 +183,19 @@ export function useOnboardingFlow(userId: string) {
 
       if (!location) {
         setError("Choose an area or use your current location before continuing.");
+        setSaving(false);
+        return false;
+      }
+
+      if (!draft.contactPhone.trim()) {
+        setError("Add a phone number before continuing.");
+        setSaving(false);
+        return false;
+      }
+
+      const { data: authUserResult, error: authUserError } = await supabase.auth.getUser();
+      if (authUserError || !authUserResult.user) {
+        setError("Unable to verify your account details. Please try again.");
         setSaving(false);
         return false;
       }
@@ -216,6 +233,25 @@ export function useOnboardingFlow(userId: string) {
             "Unable to save your profile.",
           ),
         );
+        setSaving(false);
+        return false;
+      }
+
+      const contactResult = await supabase
+        .from("profile_contacts")
+        .upsert(
+          {
+            profile_id: userId,
+            contact_phone: draft.contactPhone.trim(),
+            contact_email: authUserResult.user.email ?? null,
+          },
+          { onConflict: "profile_id" },
+        )
+        .select()
+        .single();
+
+      if (contactResult.error) {
+        setError(getUserFacingDatabaseError(contactResult.error, "Unable to save your contact details."));
         setSaving(false);
         return false;
       }
@@ -295,6 +331,7 @@ export function useOnboardingFlow(userId: string) {
 
       setProfile(activationResult.data);
       setPrivateProfile(privateResult.data);
+      setProfileContact(contactResult.data);
       setSaving(false);
       return true;
     },
@@ -629,6 +666,7 @@ export function useOnboardingFlow(userId: string) {
     () => ({
       profile,
       privateProfile,
+      profileContact,
       profilePhoto,
       preferences,
       homes,
@@ -651,6 +689,7 @@ export function useOnboardingFlow(userId: string) {
     [
       profile,
       privateProfile,
+      profileContact,
       profilePhoto,
       preferences,
       homes,

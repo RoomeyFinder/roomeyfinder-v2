@@ -112,6 +112,7 @@ export function RoommateFlow({
   const profileDraft: ProfileDraft = {
     firstName: flow.profile?.first_name ?? "",
     lastName: flow.privateProfile?.last_name ?? "",
+    contactPhone: flow.profileContact?.contact_phone ?? "",
     username: flow.profile?.username ?? "",
     birthDate: flow.privateProfile?.date_of_birth ?? "",
     gender: flow.profile?.gender ?? "prefer_not_to_say",
