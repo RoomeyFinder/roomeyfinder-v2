@@ -1,9 +1,8 @@
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { MatchesPage } from "@/components/matches-page";
 import { FlowLoading } from "@/components/roommate-flow/shared";
-import { createClient } from "@/lib/supabase/server";
+import { requireAuthenticatedUser } from "@/lib/supabase/auth";
 
 export default function MatchesRoute() {
   return (
@@ -14,11 +13,7 @@ export default function MatchesRoute() {
 }
 
 async function MatchesContent() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
-  const userId = data?.claims?.sub;
+  const { userId } = await requireAuthenticatedUser();
 
-  if (error || typeof userId !== "string") redirect("/auth/login");
-
-  return <MatchesPage userId={userId} />;
+  return < MatchesPage userId={userId} />;
 }

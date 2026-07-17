@@ -41,10 +41,15 @@ export function RoommateFlow({
   const saveProfile = useCallback(
     async (draft: ProfileDraft) => {
       const completed = await saveProfileToDatabase(draft);
-      if (completed) setActiveStep("preferences");
+      if (completed) {
+        // The header reads the username in a server component. Refresh it after
+        // saving so the Account link immediately points at the new profile URL.
+        router.refresh();
+        setActiveStep("preferences");
+      }
       return completed;
     },
-    [saveProfileToDatabase],
+    [router, saveProfileToDatabase],
   );
 
   const savePreferences = useCallback(

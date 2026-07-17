@@ -2,8 +2,8 @@
 -- in stable, appendable batches.
 create or replace function public.get_matches(
   requesting_profile_id uuid,
-  result_limit integer default 12,
-  result_offset integer default 0
+  result_limit integer,
+  result_offset integer
 )
 returns table (
   profile_id uuid, username text, first_name text, gender public.gender_type,

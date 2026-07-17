@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { NoteLine } from "@/components/roommate-flow/shared";
 import type { DiscoveryState } from "@/components/roommate-flow/types";
+import Link from "next/link";
 
 export function MatchCard({
   match,
@@ -31,7 +32,9 @@ export function MatchCard({
         <div className="flex items-start justify-between gap-3">
           <div>
             <CardTitle className="text-xl">
-              {match.first_name ?? "A potential match"}
+              <Link href={`/${match.username}`} className="hover:text-primary hover:underline">
+                {match.first_name ?? "A potential match"}
+              </Link>
               {match.candidate_age ? (
                 <span className="ml-1 font-normal text-muted-foreground">
                   , {match.candidate_age}

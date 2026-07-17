@@ -187,7 +187,7 @@ export function useOnboardingFlow(userId: string) {
         .from("profiles")
         .update({
           first_name: draft.firstName.trim(),
-          username: draft.username.trim(),
+          username: draft.username.trim().toLowerCase(),
           gender: draft.gender,
           bio: draft.lifestyleTags.join(", "),
         })
