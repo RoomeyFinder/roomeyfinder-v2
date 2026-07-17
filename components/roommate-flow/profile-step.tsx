@@ -246,6 +246,7 @@ function ProfilePhotoPicker({
               alt="Profile preview"
               fill
               sizes="112px"
+              unoptimized
               className="object-cover"
             />
           ) : (
