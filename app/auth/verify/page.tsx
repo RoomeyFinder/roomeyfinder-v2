@@ -11,6 +11,7 @@ import { Suspense } from "react";
 
 type VerifyPageProps = {
   searchParams: Promise<{
+    code?: string;
     next?: string;
     token_hash?: string;
     type?: string;
@@ -28,16 +29,17 @@ export default function VerifyMagicLinkPage({ searchParams }: VerifyPageProps) {
 }
 
 async function VerifyMagicLinkContent({ searchParams }: VerifyPageProps) {
-  const { next, token_hash: tokenHash, type } = await searchParams;
+  const { code, next, token_hash: tokenHash, type } = await searchParams;
   const callbackParams = new URLSearchParams();
 
+  if (code) callbackParams.set("code", code);
   if (tokenHash) callbackParams.set("token_hash", tokenHash);
   if (type) callbackParams.set("type", type);
   if (next?.startsWith("/") && !next.startsWith("//")) {
     callbackParams.set("next", next);
   }
 
-  const hasVerificationParams = tokenHash && type;
+  const hasVerificationParams = Boolean(code || (tokenHash && type));
   const callbackUrl = `/auth/callback?${callbackParams.toString()}`;
 
   return <VerificationCard callbackUrl={callbackUrl} valid={Boolean(hasVerificationParams)} />;
