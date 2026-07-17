@@ -23,6 +23,10 @@ function formatValue(value: string | number | null | undefined, fallback = "Not 
   return value === null || value === undefined || value === "" ? fallback : String(value);
 }
 
+function formatNaira(value: number | null | undefined, fallback = "Any") {
+  return value === null || value === undefined ? fallback : `₦${value.toLocaleString()}`;
+}
+
 function Field({ label, value }: { label: string; value: string | number | null | undefined }) {
   return (
     <div>
@@ -239,7 +243,7 @@ async function ProfileContent({
                     label="Budget"
                     value={
                       preferences.budget_min != null || preferences.budget_max != null
-                        ? `${formatValue(preferences.budget_min, "Any")} – ${formatValue(preferences.budget_max, "Any")}`
+                        ? `${formatNaira(preferences.budget_min)} – ${formatNaira(preferences.budget_max)}`
                         : null
                     }
                   />

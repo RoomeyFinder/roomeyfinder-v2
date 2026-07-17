@@ -49,32 +49,34 @@ function VerificationCard({
   valid?: boolean;
 }) {
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">Confirm sign in</CardTitle>
-        <CardDescription>
-          {loading
-            ? "Preparing your sign-in link..."
-            : valid
-              ? "Press continue to finish signing in securely."
-              : "This sign-in link is missing its verification details."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <Button className="w-full" disabled>
-            Loading...
-          </Button>
-        ) : valid && callbackUrl ? (
-          <Button asChild className="w-full">
-            <a href={callbackUrl}>Continue sign in</a>
-          </Button>
-        ) : (
-          <Button asChild className="w-full" variant="outline">
-            <Link href="/auth/login">Request a new link</Link>
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+    <div className="min-h-[70dvh] w-[90dvw] max-w-5xl">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Confirm sign in</CardTitle>
+          <CardDescription>
+            {loading
+              ? "Preparing your sign-in link..."
+              : valid
+                ? "Press continue to finish signing in securely."
+                : "This sign-in link is missing its verification details."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <Button className="w-full" disabled>
+              Loading...
+            </Button>
+          ) : valid && callbackUrl ? (
+            <Button asChild className="w-full">
+              <a href={callbackUrl}>Continue sign in</a>
+            </Button>
+          ) : (
+            <Button asChild className="w-full" variant="outline">
+              <Link href="/auth/login">Request a new link</Link>
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
