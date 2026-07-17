@@ -5,6 +5,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "db:start": "supabase start",
+    "db:reset": "supabase db reset --local",
     "test:db": "supabase test db --local supabase/tests"
   },
   "dependencies": {

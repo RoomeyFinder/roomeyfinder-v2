@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Camera, Check, ShieldCheck, UserRound } from "lucide-react";
+import Image from "next/image";
 
 import { LocationPicker } from "@/components/location-picker";
 import { Button } from "@/components/ui/button";
@@ -110,12 +111,20 @@ function ProfilePhotoPicker({ existingPhoto, selectedPhoto, onSelect }: { existi
   }
 
   return <div className="flex flex-col items-center border-b pb-6 text-center">
-    <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-secondary bg-secondary text-brand shadow-sm">
-      {previewUrl ? <img src={previewUrl} alt="Profile preview" className="h-full w-full object-cover" /> : <UserRound className="m-auto h-12 w-12" />}
-      <label htmlFor="profile-photo" className="absolute inset-x-2 bottom-2 flex cursor-pointer items-center justify-center gap-1 rounded-full bg-background/95 px-2 py-1.5 text-xs font-semibold text-foreground shadow-sm hover:bg-background"><Camera className="h-3.5 w-3.5" /> <span<input id="profile-photo" type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => handleSelect(event.target.files?.[0])} /></label>
+    <div className="relative h-20 w-20">
+      <div className="relative flex justify-center items-center h-20 w-20 overflow-hidden rounded-full border-4 border-secondary bg-secondary text-brand shadow-sm">
+        {previewUrl ? <Image src={previewUrl} alt="Profile preview" fill sizes="112px" className="object-cover" /> : <UserRound className="m-auto h-12 w-12" />}
+      </div>
+      <label htmlFor="profile-photo" aria-label={existingPhoto || selectedPhoto ? "Change profile photo" : "Add profile photo"} className="absolute -bottom-0 -right-0 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-1 border-background bg-brand/70 text-brand-foreground shadow-md transition-colors hover:bg-brand/90">
+        <Camera className="h-3 w-3" />
+        <input id="profile-photo" type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => handleSelect(event.target.files?.[0])} />
+      </label>
     </div>
-    <p className="mt-3 text-sm font-semibold">Profile photo <span className="font-normal text-muted-foreground">(optional)</span></p>
-    <p className="mt-1 text-xs text-muted-foreground">A clear photo helps people recognize you. JPG, PNG, or WebP · up to 5MB.</p>
+    <p className="mt-4 text-sm font-semibold">Profile photo <span className="font-normal text-muted-foreground">(optional)</span></p>
+    <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+      <span className="block">A clear photo helps people recognize you.</span>
+      <span className="block">JPG, PNG, or WebP · up to 5MB.</span>
+    </p>
     {error ? <p role="alert" className="mt-2 text-xs text-destructive">{error}</p> : null}
   </div>;
 }
