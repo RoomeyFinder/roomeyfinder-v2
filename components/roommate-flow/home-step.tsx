@@ -234,8 +234,8 @@ function HomeForm({
           />
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <fieldset disabled={saving} className="contents">
+          <form className="space-y-8" onSubmit={handleSubmit}>
+            <fieldset disabled={saving} className="contents space-y-8">
               <Field label="Listing title" htmlFor="home-title">
               <Input
                 id="home-title"
@@ -264,7 +264,7 @@ function HomeForm({
               value={draft.location}
               onChange={(location) => update("location", location)}
             />
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <Field label="City" htmlFor="home-city">
                 <Input
                   id="home-city"
@@ -297,7 +297,7 @@ function HomeForm({
                 placeholder="15 Example Street"
               />
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <Field label="Monthly rent (₦)" htmlFor="home-rent">
                 <Input
                   id="home-rent"

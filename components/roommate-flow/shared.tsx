@@ -156,7 +156,7 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-3">
       <Label htmlFor={htmlFor}>
         {label}
         {optional ? (

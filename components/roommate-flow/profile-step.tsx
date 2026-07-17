@@ -52,14 +52,14 @@ export function ProfileStep({ initialDraft, initialPhoto, onContinue, saving }: 
           />
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <fieldset disabled={saving} className="contents">
+          <form className="space-y-8" onSubmit={handleSubmit}>
+            <fieldset disabled={saving} className="contents space-y-8">
               <ProfilePhotoPicker
                 existingPhoto={initialPhoto}
                 selectedPhoto={draft.profilePhoto}
                 onSelect={selectProfilePhoto}
               />
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
               <Field label="First name" htmlFor="first-name">
                 <Input
                   id="first-name"

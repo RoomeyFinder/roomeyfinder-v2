@@ -46,8 +46,8 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
           />
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <fieldset disabled={saving} className="contents">
+          <form className="space-y-8" onSubmit={handleSubmit}>
+            <fieldset disabled={saving} className="contents space-y-8">
               {validationError ? (
               <p
                 role="alert"
@@ -58,7 +58,7 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
             ) : null}
             <div>
               <p className="mb-3 text-sm font-medium">Monthly budget (₦)</p>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 <Field label="Minimum" htmlFor="budget-min">
                   <Input
                     id="budget-min"
@@ -83,7 +83,7 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
                 </Field>
               </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <Field label="Move in from" htmlFor="move-in-from">
                 <Input
                   id="move-in-from"
@@ -123,7 +123,7 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
                 <span className="shrink-0 text-sm text-muted-foreground">miles</span>
               </div>
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               <Field label="Smoking at home" htmlFor="smoking">
                 <select
                   id="smoking"
