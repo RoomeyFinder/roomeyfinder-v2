@@ -26,6 +26,9 @@ export type ProfilePrivate =
 export type UpdateProfilePrivate =
   Database["public"]["Tables"]["profile_private"]["Update"]
 
+export type ProfileContact =
+  Database["public"]["Tables"]["profile_contacts"]["Row"]
+
 /*
 |--------------------------------------------------------------------------
 | Preferences

@@ -1,26 +1,24 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { MatchesPage } from "@/components/matches-page";
 import { FlowLoading } from "@/components/roommate-flow/shared";
 import { createClient } from "@/lib/supabase/server";
-import { RoommateFlow } from "@/components/roommate-flow";
 
-export default function ProtectedPage() {
+export default function MatchesRoute() {
   return (
     <Suspense fallback={<FlowLoading />}>
-      <ProtectedContent />
+      <MatchesContent />
     </Suspense>
   );
 }
 
-async function ProtectedContent() {
+async function MatchesContent() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const userId = data?.claims?.sub;
 
   if (error || typeof userId !== "string") redirect("/auth/login");
 
-  return (
-    <RoommateFlow userId={userId} />
-  );
+  return <MatchesPage userId={userId} />;
 }
