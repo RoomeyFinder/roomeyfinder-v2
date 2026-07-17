@@ -40,7 +40,15 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    console.error("Unable to send Supabase magic link:", error.message);
+    // Keep the response generic so Auth configuration details are not exposed
+    // to visitors, but preserve enough context in the server log to diagnose
+    // provider, redirect, and rate-limit failures.
+    console.error("Unable to send Supabase magic link:", {
+      name: error.name,
+      message: error.message,
+      status: error.status,
+      code: error.code,
+    });
     return NextResponse.json(
       { error: "Unable to send the magic link. Please try again." },
       { status: 500 },
