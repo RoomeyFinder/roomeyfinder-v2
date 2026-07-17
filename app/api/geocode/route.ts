@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 type GeoapifyResult = {
   place_id?: string;
@@ -10,6 +11,10 @@ type GeoapifyResult = {
 };
 
 export async function GET(request: Request) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+
   const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
 
   if (query.length < 2) {
