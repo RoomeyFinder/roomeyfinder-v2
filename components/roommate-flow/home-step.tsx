@@ -367,6 +367,7 @@ function HomeForm({
                             alt={photo.isPrimary ? "Primary home photo" : "Home photo"}
                             fill
                             sizes="(max-width: 640px) 50vw, 33vw"
+                            unoptimized
                             className="object-cover"
                           />
                         ) : (

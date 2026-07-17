@@ -82,11 +82,11 @@ async function ProfileContent({
         .eq("user_id", profile.id)
         .maybeSingle()
       : Promise.resolve({ data: null }),
-    supabase
-      .from("homes")
-      .select(
-        "title, description, city, state, country, rent, deposit, bedrooms, bathrooms, available_from, status",
-      )
+      supabase
+        .from("homes")
+        .select(
+        "id, title, description, city, state, country, rent, deposit, bedrooms, bathrooms, available_from, status",
+        )
       .eq("owner_id", profile.id)
       .order("updated_at", { ascending: false })
       .limit(1)
@@ -107,6 +107,22 @@ async function ProfileContent({
   const { data: connectedContacts } = isConnected && viewerId
     ? await supabase.from("profile_contacts").select("profile_id, contact_email, contact_phone").in("profile_id", [viewerId, profile.id])
     : { data: null };
+  const { data: homePhotos } = home
+    ? await supabase
+      .from("home_photos")
+      .select("id, storage_path, is_primary, position")
+      .eq("home_id", home.id)
+      .order("position", { ascending: true })
+    : { data: null };
+  const homePhotoUrls = homePhotos
+    ? (await Promise.all(
+      homePhotos.map(async (homePhoto) => ({
+        ...homePhoto,
+        url: (await supabase.storage.from("home-photos").createSignedUrl(homePhoto.storage_path, 60 * 60))
+          .data?.signedUrl ?? null,
+      })),
+    )).filter((homePhoto) => homePhoto.url)
+    : [];
   const photoUrl = photo?.storage_path
     ? (await supabase.storage.from("profile-photos").createSignedUrl(photo.storage_path, 60 * 60))
       .data?.signedUrl
@@ -124,6 +140,7 @@ async function ProfileContent({
                 alt=""
                 width={88}
                 height={88}
+                unoptimized
                 className="h-22 w-22 rounded-full object-cover"
               />
             ) : (
@@ -251,6 +268,21 @@ async function ProfileContent({
               </div>
               {home ? (
                 <>
+                  {homePhotoUrls.length > 0 ? (
+                    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {homePhotoUrls.map((homePhoto) => (
+                        <Image
+                          key={homePhoto.id}
+                          src={homePhoto.url!}
+                          alt={homePhoto.is_primary ? "Primary home photo" : "Home photo"}
+                          width={320}
+                          height={220}
+                          unoptimized
+                          className="aspect-[4/3] w-full rounded-brand-md object-cover"
+                        />
+                      ))}
+                    </div>
+                  ) : null}
                   <p className="mt-2 text-muted-foreground">{formatValue(home.description)}</p>
                   <dl className="mt-5 grid gap-5 sm:grid-cols-2">
                     <Field

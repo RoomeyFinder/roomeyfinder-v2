@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import { Suspense } from "react";
 
 type VerifyPageProps = {
@@ -70,7 +71,7 @@ function VerificationCard({
           </Button>
         ) : (
           <Button asChild className="w-full" variant="outline">
-            <a href="/auth/login">Request a new link</a>
+            <Link href="/auth/login">Request a new link</Link>
           </Button>
         )}
       </CardContent>

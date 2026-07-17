@@ -94,7 +94,10 @@ export function RoommateFlow({
     flow.gate === "discover"
       ? setupSteps.length
       : setupSteps.findIndex((step) => step.id === flow.gate);
-  const canViewActiveStep = activeStepIndex >= 0 && activeStepIndex <= gateIndex;
+  // An explicit step from the profile page is an edit request, so it should
+  // remain selectable even when another onboarding step is still incomplete.
+  const canViewActiveStep =
+    activeStepIndex >= 0 && (activeStepIndex <= gateIndex || initialStep !== undefined);
 
   if (flow.loading) return <FlowLoading />;
 
