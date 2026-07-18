@@ -69,7 +69,7 @@ export function InterestButton({
         variant="outline"
         // disabled
         size="sm"
-        className="border-roomey-green-100 pointer-events-none text-roomey-green-main bg-whiite/30"
+        className="bg-whiite/30 pointer-events-none border-roomey-green-100 text-roomey-green-main"
       >
         <CheckCircle2 /> Connected
       </Button>

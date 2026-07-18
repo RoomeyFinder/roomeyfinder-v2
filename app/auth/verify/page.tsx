@@ -14,7 +14,7 @@ type VerifyPageProps = {
 
 export default function VerifyMagicLinkPage({ searchParams }: VerifyPageProps) {
   return (
-    <div className="flex min-h-[70dvh] w-[90dvw] mx-auto max-w-5xl justify-center items-center">
+    <div className="mx-auto flex min-h-[70dvh] w-[90dvw] max-w-5xl items-center justify-center">
       <Suspense fallback={<VerificationCard loading />}>
         <VerifyMagicLinkContent searchParams={searchParams} />
       </Suspense>
