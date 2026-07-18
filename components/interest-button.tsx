@@ -65,7 +65,12 @@ export function InterestButton({
 
   if (status === "accepted") {
     return (
-      <Button variant="outline" disabled>
+      <Button
+        variant="outline"
+        // disabled
+        size="sm"
+        className="border-roomey-green-100 pointer-events-none text-roomey-green-main bg-whiite/30"
+      >
         <CheckCircle2 /> Connected
       </Button>
     );

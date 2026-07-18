@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownUp, Inbox, Send } from "lucide-react";
+import { ArrowDownUp, CheckCircle2, Inbox, Send } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -150,6 +150,14 @@ export function InterestsPage({
                       onClick={() => void view.respondToInterest(interest.id, "declined")}
                     >
                       Decline
+                    </Button>
+                  </div>
+                ) : interest.status === "accepted" && profile?.username ? (
+                  <div className="px-6 pb-6">
+                    <Button asChild size="sm">
+                      <Link href={`/${profile.username}`}>
+                        <CheckCircle2 /> View contact info
+                      </Link>
                     </Button>
                   </div>
                 ) : null}
