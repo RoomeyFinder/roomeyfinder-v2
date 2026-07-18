@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Home, Pencil, Settings2, UserRound } from "lucide-react";
 
+import { BackButton } from "@/components/back-button";
 import { InterestButton } from "@/components/interest-button";
 import { createClient } from "@/lib/supabase/server";
 
@@ -68,7 +69,9 @@ async function ProfileContent({
       .from("profile_photos")
       .select("storage_path")
       .eq("user_id", profile.id)
-      .eq("is_primary", true)
+      .order("is_primary", { ascending: false })
+      .order("position", { ascending: true })
+      .limit(1)
       .maybeSingle(),
     isOwner
       ? supabase
@@ -145,6 +148,7 @@ async function ProfileContent({
 
   return (
     <main className="mx-auto w-full max-w-3xl py-2">
+      <BackButton />
       <section className="overflow-hidden rounded-brand-md border bg-card shadow-ring">
         <div className="flex flex-col gap-5 border-b p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
@@ -155,7 +159,7 @@ async function ProfileContent({
                 width={88}
                 height={88}
                 unoptimized
-                className="h-22 w-22 rounded-full object-cover"
+                className="h-[88px] w-[88px] rounded-full object-cover"
               />
             ) : (
               <div className="h-[88px] w-[88px] rounded-full bg-secondary" />
