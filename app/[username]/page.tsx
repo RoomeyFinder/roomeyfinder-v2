@@ -368,11 +368,18 @@ function ContactItem({
   label: string;
   contact: { contact_email: string | null; contact_phone: string | null } | undefined;
 }) {
-  const value = contact?.contact_email ?? contact?.contact_phone;
+  const hasContact = Boolean(contact?.contact_email || contact?.contact_phone);
   return (
     <div>
       <p className="font-medium text-foreground">{label}</p>
-      <p className="break-all text-muted-foreground">{value ?? "No contact details added yet."}</p>
+      {hasContact ? (
+        <div className="space-y-1 text-muted-foreground">
+          {contact?.contact_phone ? <p className="break-all">{contact.contact_phone}</p> : null}
+          {contact?.contact_email ? <p className="break-all">{contact.contact_email}</p> : null}
+        </div>
+      ) : (
+        <p className="text-muted-foreground">No contact details added yet.</p>
+      )}
     </div>
   );
 }

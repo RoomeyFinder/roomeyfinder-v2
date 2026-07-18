@@ -1,8 +1,9 @@
 "use client";
 
 import { Home, ShieldCheck } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import { Badge } from "@/components/ui/badge";
 import { FlowLoading, FlowProgress } from "@/components/roommate-flow/shared";
@@ -98,6 +99,10 @@ export function RoommateFlow({
   // remain selectable even when another onboarding step is still incomplete.
   const canViewActiveStep =
     activeStepIndex >= 0 && (activeStepIndex <= gateIndex || initialStep !== undefined);
+
+  useEffect(() => {
+    if (flow.error) toast.error(flow.error);
+  }, [flow.error]);
 
   if (flow.loading) return <FlowLoading />;
 

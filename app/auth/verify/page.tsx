@@ -14,7 +14,7 @@ type VerifyPageProps = {
 
 export default function VerifyMagicLinkPage({ searchParams }: VerifyPageProps) {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="flex min-h-[70dvh] w-[90dvw] mx-auto max-w-5xl justify-center items-center">
       <Suspense fallback={<VerificationCard loading />}>
         <VerifyMagicLinkContent searchParams={searchParams} />
       </Suspense>
@@ -49,34 +49,32 @@ function VerificationCard({
   valid?: boolean;
 }) {
   return (
-    <div className="min-h-[70dvh] w-[90dvw] max-w-5xl">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Confirm sign in</CardTitle>
-          <CardDescription>
-            {loading
-              ? "Preparing your sign-in link..."
-              : valid
-                ? "Press continue to finish signing in securely."
-                : "This sign-in link is missing its verification details."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <Button className="w-full" disabled>
-              Loading...
-            </Button>
-          ) : valid && callbackUrl ? (
-            <Button asChild className="w-full">
-              <a href={callbackUrl}>Continue sign in</a>
-            </Button>
-          ) : (
-            <Button asChild className="w-full" variant="outline">
-              <Link href="/auth/login">Request a new link</Link>
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle className="text-2xl">Confirm sign in</CardTitle>
+        <CardDescription>
+          {loading
+            ? "Preparing your sign-in link..."
+            : valid
+              ? "Press continue to finish signing in securely."
+              : "This sign-in link is missing its verification details."}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <Button className="w-full" disabled>
+            Loading...
+          </Button>
+        ) : valid && callbackUrl ? (
+          <Button asChild className="w-full">
+            <a href={callbackUrl}>Continue sign in</a>
+          </Button>
+        ) : (
+          <Button asChild className="w-full" variant="outline">
+            <Link href="/auth/login">Request a new link</Link>
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

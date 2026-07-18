@@ -3,6 +3,7 @@ import type { Viewport } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { brand } from "@/lib/brand";
+import { ToastProvider } from "@/components/toast-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -80,6 +81,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <ToastProvider />
         </ThemeProvider>
       </body>
     </html>

@@ -2,6 +2,7 @@
 
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -19,6 +20,7 @@ export function InterestButton({
   initialStatus: "pending" | "accepted" | "declined" | null;
   isIncoming: boolean;
 }) {
+  const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -52,8 +54,12 @@ export function InterestButton({
       .eq("id", interestId)
       .eq("to_profile_id", viewerId);
 
-    if (updateError) setError("Couldn’t update this interest. Please try again.");
-    else setStatus(nextStatus);
+    if (updateError) {
+      setError("Couldn’t update this interest. Please try again.");
+    } else {
+      setStatus(nextStatus);
+      if (nextStatus === "accepted") router.refresh();
+    }
     setSending(false);
   }
 
