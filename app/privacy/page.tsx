@@ -10,7 +10,7 @@ export default function PrivacyPage() {
       <p>
         Your contact details are kept private and are shown to the other person only after an
         interest is accepted. You may request account and data deletion by emailing
-        support@roomeyfinder.com.
+        contact@roomeyfinder.com.
       </p>
     </ContentPage>
   );

@@ -5,8 +5,8 @@ export default function ContactPage() {
     <ContentPage title="Contact us">
       <p>
         Have a question or found a problem? Email us at{" "}
-        <a className="text-primary underline" href="mailto:support@roomeyfinder.com">
-          support@roomeyfinder.com
+        <a className="text-primary underline" href="mailto:contact@roomeyfinder.com">
+          contact@roomeyfinder.com
         </a>
         .
       </p>

@@ -22,9 +22,9 @@ export function SiteFooter() {
             </Link>
             <a
               className="text-muted-foreground transition-colors hover:text-foreground"
-              href="mailto:support@roomeyfinder.com"
+              href="mailto:contact@roomeyfinder.com"
             >
-              support@roomeyfinder.com
+              contact@roomeyfinder.com
             </a>
           </div>
 
