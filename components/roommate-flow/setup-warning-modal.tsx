@@ -33,7 +33,7 @@ const setupDetails = {
 export function SetupWarningModal({
   gate,
   onUpdateSetup,
-  onContinueAnyway,
+  // onContinueAnyway,
 }: {
   gate: Exclude<FlowGate, "discover">;
   onUpdateSetup: () => void;
@@ -71,9 +71,9 @@ export function SetupWarningModal({
           </p>
         </CardContent>
         <CardFooter className="flex-col gap-3 p-6 sm:flex-row sm:justify-end">
-          <Button variant="outline" className="w-full sm:w-auto" onClick={onContinueAnyway}>
+          {/* <Button variant="outline" className="w-full sm:w-auto" onClick={onContinueAnyway}>
             Find matches anyway
-          </Button>
+          </Button> */}
           <Button className="w-full sm:w-auto" onClick={onUpdateSetup}>
             Update my info <ArrowRight />
           </Button>
