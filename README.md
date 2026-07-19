@@ -4,9 +4,42 @@ RoomeyFinder helps people in Nigeria find compatible roommates and shared homes.
 
 The app is built with Next.js and Supabase, with privacy-conscious profile data, authenticated workflows, home listings, photo uploads, and database-backed matching.
 
+## Repository
+
+Public repository: [github.com/RoomeyFinder/roomeyfinder-v2](https://github.com/RoomeyFinder/roomeyfinder-v2)
+
+## How Codex and GPT-5.6 were used
+
+OpenAI Codex, powered by GPT-5.6, was used as a development collaborator throughout the project. It helped with:
+
+- Planning and implementing the Next.js roommate discovery flows and responsive UI
+- Building and refining Supabase authentication, database, Storage, and Row Level Security workflows
+- Developing compatibility matching, interest-based contact reveal, and home-listing functionality
+- Creating and reviewing validation, seed data, database tests, and developer documentation
+- Debugging issues, reviewing code quality, and running the project’s type-check, lint, formatting, build, and database test commands
+
+All generated changes were reviewed, adapted, and tested as part of the project’s development process.
+
+GPT-5.6 was integrated into the development workflow through Codex as an engineering collaborator. It was not called at runtime by the RoomeyFinder application. Codex assisted with planning, implementation, debugging, testing, and code review, while all changes were reviewed and validated by the developer.
+
+## Key product, engineering, and design decisions
+
+- **Mutual-interest contact reveal:** Contact details remain private until both users express interest and the connection is accepted. This supports safer introductions and keeps discovery separate from unsolicited contact.
+- **Supabase Row Level Security and private Storage:** User-owned data, private profile information, and uploaded photos are protected with database and Storage policies. This keeps authorization close to the data layer instead of relying only on client-side checks.
+- **Structured compatibility matching:** Matching uses practical roommate criteria such as location, budget, lifestyle, and home preferences so users can understand why recommendations are relevant.
+- **Guided setup flows:** Profile, preferences, and home details are collected through focused steps to reduce cognitive load and ensure the matching system has useful information.
+- **Responsive and reduced-motion-friendly UI:** The interface is designed for mobile and desktop use, with animations kept purposeful and reduced when users prefer less motion. This balances visual polish with accessibility and usability.
+- **Database-backed local development:** Deterministic seed data, migrations, and database/RLS tests were chosen so important user journeys and privacy rules can be tested repeatably before deployment.
+
+This project was built with Codex through the Codex extension inside Visual Studio Code. Submission verification is provided through the `/feedback` Session ID from the main development thread:
+
+```text
+Feedback Session ID: 019f6dd1-c281-7490-b97a-c00a670f61d2
+```
+
 ## Features
 
-- Magic-link authentication with Supabase Auth
+- Magic-link & social authentication with Supabase Auth
 - Guided profile, preference, and home setup flows
 - Roommate and shared-home discovery
 - Compatibility matching based on location, budget, lifestyle, and home preferences
