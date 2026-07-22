@@ -10,7 +10,7 @@ type SetupStep = Exclude<FlowGate, "discover">;
 export default async function SetupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ step?: string }>;
+  searchParams: Promise<{ step?: string; returnTo?: string }>;
 }) {
   return (
     <Suspense fallback={<FlowLoading />}>
@@ -23,10 +23,19 @@ function isSetupStep(step: string | undefined): step is SetupStep {
   return step === "profile" || step === "preferences" || step === "home";
 }
 
-async function SetupContent({ searchParams }: { searchParams: Promise<{ step?: string }> }) {
-  const { step } = await searchParams;
+function isAllowedReturnPath(path: string | undefined) {
+  return path === "/matches" ? path : undefined;
+}
+
+async function SetupContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ step?: string; returnTo?: string }>;
+}) {
+  const { step, returnTo } = await searchParams;
   const initialStep = isSetupStep(step) ? step : undefined;
+  const allowedReturnPath = isAllowedReturnPath(returnTo);
   const { userId } = await requireAuthenticatedUser();
 
-  return <RoommateFlow userId={userId} initialStep={initialStep} />;
+  return <RoommateFlow userId={userId} initialStep={initialStep} returnTo={allowedReturnPath} />;
 }

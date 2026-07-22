@@ -2,13 +2,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { getAudienceDescription, getAudienceLabel, type HomeChoice } from "@/lib/roommate-flow";
-import { UsersRound } from "lucide-react";
+import { Settings2, UsersRound } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyMatches } from "@/components/roommate-flow/empty-matches";
 import { IncomingInterests } from "@/components/roommate-flow/incoming-interests";
 import { MatchCard } from "@/components/roommate-flow/match-card";
 import type { DiscoveryState } from "@/components/roommate-flow/types";
+import Link from "next/link";
 
 export function DiscoveryStep({
   userId,
@@ -31,13 +32,20 @@ export function DiscoveryStep({
             Your discovery
           </p>
           <h2 className="mt-1 text-2xl font-semibold tracking-tight">
-            People who could make sense.
+            People who could make sense. <Badge variant="secondary" className="w-fit gap-1.5 px-3 py-1.5">
+              <UsersRound className="h-3.5 w-3.5" /> {getAudienceLabel(choice)}
+            </Badge>
           </h2>
           <p className="mt-2 text-muted-foreground">{getAudienceDescription(choice)}</p>
+
         </div>
-        <Badge variant="secondary" className="w-fit gap-1.5 px-3 py-1.5">
-          <UsersRound className="h-3.5 w-3.5" /> {getAudienceLabel(choice)}
-        </Badge>
+        <div className="self-start">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/setup?step=preferences&returnTo=%2Fmatches">
+              <Settings2 /> Update preferences
+            </Link>
+          </Button>
+        </div>
       </div>
       {incoming.length > 0 ? <IncomingInterests interests={incoming} /> : null}
       {discovery.error ? (

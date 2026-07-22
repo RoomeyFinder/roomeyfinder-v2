@@ -17,6 +17,31 @@ import { NoteLine } from "@/components/roommate-flow/shared";
 import type { DiscoveryState } from "@/components/roommate-flow/types";
 import Link from "next/link";
 
+function getPreferredAgeDifference(
+  candidateAge: number | null,
+  minAge: number | null,
+  maxAge: number | null,
+) {
+  if (candidateAge === null || minAge === null || maxAge === null) return null;
+  if (candidateAge < minAge) return candidateAge - minAge;
+  if (candidateAge > maxAge) return candidateAge - maxAge;
+  return 0;
+}
+
+function formatPreferredAgeDifference(
+  difference: number | null,
+  minAge: number | null,
+  maxAge: number | null,
+) {
+  if (difference === null || minAge === null || maxAge === null) return null;
+  if (difference === 0) return `Within your preferred age range (${minAge}-${maxAge})`;
+
+  const sign = difference > 0 ? "+" : "";
+  const years = Math.abs(difference) === 1 ? "year" : "years";
+  const direction = difference > 0 ? "above" : "below";
+  return `Age: ${sign}${difference} ${years} ${direction} your preferred range`;
+}
+
 export function MatchCard({
   match,
   userId,
@@ -32,16 +57,18 @@ export function MatchCard({
   const accepted = interest?.status === "accepted";
   const score = match.compatibility_percentage ?? 0;
   const sending = discovery.workingId === match.profile_id;
-  const ageDifference =
-    discovery.currentAge !== null && match.candidate_age !== null
-      ? match.candidate_age - discovery.currentAge
-      : null;
-  const ageDifferenceLabel =
-    ageDifference === null
-      ? null
-      : ageDifference === 0
-        ? "Same age as you"
-        : `${Math.abs(ageDifference)} year${Math.abs(ageDifference) === 1 ? "" : "s"} ${ageDifference > 0 ? "older" : "younger"} than you`;
+  const preferredAgeMin = discovery.preferredAgeRange.min;
+  const preferredAgeMax = discovery.preferredAgeRange.max;
+  const ageDifference = getPreferredAgeDifference(
+    match.candidate_age,
+    preferredAgeMin,
+    preferredAgeMax,
+  );
+  const ageDifferenceLabel = formatPreferredAgeDifference(
+    ageDifference,
+    preferredAgeMin,
+    preferredAgeMax,
+  );
 
   return (
     <Card className="flex flex-col overflow-hidden">

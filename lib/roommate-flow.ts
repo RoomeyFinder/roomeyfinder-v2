@@ -28,6 +28,9 @@ export type PreferenceDraft = {
   maxDistanceMiles: string;
   moveInFrom: string;
   moveInTo: string;
+  preferredGender: "" | "male" | "female" | "non_binary" | "prefer_not_to_say";
+  minAge: string;
+  maxAge: string;
   smokingPreference: "yes" | "no" | "outside_only";
   petsPreference: "yes" | "no" | "depends";
 };
@@ -74,6 +77,10 @@ export function validatePreferenceDraft(draft: PreferenceDraft) {
   const budgetMin = Number(draft.budgetMin);
   const budgetMax = Number(draft.budgetMax);
   const maxDistanceMiles = Number(draft.maxDistanceMiles);
+  const hasMinAge = draft.minAge.trim() !== "";
+  const hasMaxAge = draft.maxAge.trim() !== "";
+  const minAge = Number(draft.minAge);
+  const maxAge = Number(draft.maxAge);
 
   if (
     !Number.isFinite(budgetMin) ||
@@ -87,6 +94,21 @@ export function validatePreferenceDraft(draft: PreferenceDraft) {
 
   if (!Number.isFinite(maxDistanceMiles) || maxDistanceMiles <= 0) {
     return "Enter a search radius greater than zero.";
+  }
+
+  if (hasMinAge !== hasMaxAge) {
+    return "Enter both ends of the preferred age range, or leave both blank.";
+  }
+
+  if (
+    (hasMinAge || hasMaxAge) &&
+    (!Number.isInteger(minAge) ||
+      !Number.isInteger(maxAge) ||
+      minAge < 18 ||
+      maxAge > 120 ||
+      minAge > maxAge)
+  ) {
+    return "Enter a valid preferred age range from 18 to 120.";
   }
 
   const today = getTodayDate();

@@ -367,6 +367,9 @@ export function useOnboardingFlow(userId: string) {
           max_distance_miles: Number(draft.maxDistanceMiles),
           move_in_from: draft.moveInFrom,
           move_in_to: draft.moveInTo,
+          preferred_gender: draft.preferredGender || null,
+          min_age: draft.minAge.trim() ? Number(draft.minAge) : null,
+          max_age: draft.maxAge.trim() ? Number(draft.maxAge) : null,
           smoking_preference: draft.smokingPreference,
           pets_preference: draft.petsPreference,
         })

@@ -6,13 +6,15 @@ import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { useInterestRealtime } from "@/components/interest-realtime-provider";
 import { getMatches, type Match } from "@/lib/matches";
-import { getAge } from "@/lib/profile-validation";
 import type { Interest, ProfileContact } from "@/types/schemas";
 
 export function useDiscovery(userId: string, enabled: boolean) {
   const pageSize = 12;
   const [matches, setMatches] = useState<Match[]>([]);
-  const [currentAge, setCurrentAge] = useState<number | null>(null);
+  const [preferredAgeRange, setPreferredAgeRange] = useState<{
+    min: number | null;
+    max: number | null;
+  }>({ min: null, max: null });
   const [interests, setInterests] = useState<Interest[]>([]);
   const [contacts, setContacts] = useState<Record<string, ProfileContact>>({});
   const [loading, setLoading] = useState(false);
@@ -29,15 +31,11 @@ export function useDiscovery(userId: string, enabled: boolean) {
     const supabase = createClient();
 
     try {
-      const [matchData, outgoing, incoming, privateProfile] = await Promise.all([
+      const [matchData, outgoing, incoming, preferences] = await Promise.all([
         getMatches(userId, pageSize, 0),
         supabase.from("interests").select("*").eq("from_profile_id", userId),
         supabase.from("interests").select("*").eq("to_profile_id", userId),
-        supabase
-          .from("profile_private")
-          .select("date_of_birth")
-          .eq("profile_id", userId)
-          .maybeSingle(),
+        supabase.from("preferences").select("min_age, max_age").eq("user_id", userId).maybeSingle(),
       ]);
 
       const interestData = [...(outgoing.data ?? []), ...(incoming.data ?? [])];
@@ -51,14 +49,15 @@ export function useDiscovery(userId: string, enabled: boolean) {
         ? await supabase.from("profile_contacts").select("*").in("profile_id", uniqueAcceptedIds)
         : { data: [], error: null };
 
-      if (outgoing.error || incoming.error || privateProfile.error || contactResult.error) {
-        throw outgoing.error ?? incoming.error ?? privateProfile.error ?? contactResult.error;
+      if (outgoing.error || incoming.error || preferences.error || contactResult.error) {
+        throw outgoing.error ?? incoming.error ?? preferences.error ?? contactResult.error;
       }
 
       setMatches(matchData);
-      setCurrentAge(
-        privateProfile.data?.date_of_birth ? getAge(privateProfile.data.date_of_birth) : null,
-      );
+      setPreferredAgeRange({
+        min: preferences.data?.min_age ?? null,
+        max: preferences.data?.max_age ?? null,
+      });
       setHasMore(matchData.length === pageSize);
       setInterests(interestData);
       setContacts(
@@ -200,7 +199,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
   return useMemo(
     () => ({
       matches,
-      currentAge,
+      preferredAgeRange,
       interests,
       contacts,
       loading,
@@ -216,7 +215,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
     }),
     [
       matches,
-      currentAge,
+      preferredAgeRange,
       interests,
       contacts,
       loading,

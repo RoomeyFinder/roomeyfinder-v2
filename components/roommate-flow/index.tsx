@@ -24,9 +24,11 @@ import type {
 export function RoommateFlow({
   userId,
   initialStep,
+  returnTo,
 }: {
   userId: string;
   initialStep?: Exclude<FlowGate, "discover">;
+  returnTo?: string;
 }) {
   const router = useRouter();
   const flow = useOnboardingFlow(userId);
@@ -56,10 +58,16 @@ export function RoommateFlow({
   const savePreferences = useCallback(
     async (draft: PreferenceDraft) => {
       const completed = await savePreferencesToDatabase(draft);
-      if (completed) setActiveStep("home");
+      if (completed) {
+        if (returnTo) {
+          router.replace(returnTo);
+        } else {
+          setActiveStep("home");
+        }
+      }
       return completed;
     },
-    [savePreferencesToDatabase],
+    [returnTo, router, savePreferencesToDatabase],
   );
 
   const continueAsSeeker = useCallback(
@@ -140,6 +148,9 @@ export function RoommateFlow({
     maxDistanceMiles: flow.preferences?.max_distance_miles?.toString() ?? "25",
     moveInFrom: flow.preferences?.move_in_from ?? "",
     moveInTo: flow.preferences?.move_in_to ?? "",
+    preferredGender: flow.preferences?.preferred_gender ?? "",
+    minAge: flow.preferences?.min_age?.toString() ?? "",
+    maxAge: flow.preferences?.max_age?.toString() ?? "",
     smokingPreference: flow.preferences?.smoking_preference ?? "no",
     petsPreference: flow.preferences?.pets_preference ?? "depends",
   };

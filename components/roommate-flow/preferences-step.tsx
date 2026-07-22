@@ -123,6 +123,53 @@ export function PreferencesStep({ initialDraft, onContinue, saving }: Preference
                   <span className="shrink-0 text-sm text-muted-foreground">miles</span>
                 </div>
               </Field>
+              <div className="grid gap-6 sm:grid-cols-3">
+                <Field
+                  label="Preferred gender"
+                  htmlFor="preferred-gender"
+                  hint="Leave this as any gender if you have no preference."
+                >
+                  <select
+                    id="preferred-gender"
+                    className={selectClass}
+                    value={draft.preferredGender}
+                    onChange={(event) =>
+                      update(
+                        "preferredGender",
+                        event.target.value as PreferenceDraft["preferredGender"],
+                      )
+                    }
+                  >
+                    <option value="">Any gender</option>
+                    <option value="male">Men</option>
+                    <option value="female">Women</option>
+                    <option value="non_binary">Non-binary</option>
+                    <option value="prefer_not_to_say">Prefer not to say</option>
+                  </select>
+                </Field>
+                <Field label="Preferred age from" htmlFor="min-age" className="flex flex-col">
+                  <Input
+                    id="min-age"
+                    type="number"
+                    min="18"
+                    max="120"
+                    value={draft.minAge}
+                    onChange={(event) => update("minAge", event.target.value)}
+                    placeholder="Any"
+                  />
+                </Field>
+                <Field label="Preferred age to" htmlFor="max-age" className="flex flex-col">
+                  <Input
+                    id="max-age"
+                    type="number"
+                    min="18"
+                    max="120"
+                    value={draft.maxAge}
+                    onChange={(event) => update("maxAge", event.target.value)}
+                    placeholder="Any"
+                  />
+                </Field>
+              </div>
               <div className="grid gap-6 sm:grid-cols-2">
                 <Field label="Smoking at home" htmlFor="smoking">
                   <select
