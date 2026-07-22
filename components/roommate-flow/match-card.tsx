@@ -32,6 +32,16 @@ export function MatchCard({
   const accepted = interest?.status === "accepted";
   const score = match.compatibility_percentage ?? 0;
   const sending = discovery.workingId === match.profile_id;
+  const ageDifference =
+    discovery.currentAge !== null && match.candidate_age !== null
+      ? match.candidate_age - discovery.currentAge
+      : null;
+  const ageDifferenceLabel =
+    ageDifference === null
+      ? null
+      : ageDifference === 0
+        ? "Same age as you"
+        : `${Math.abs(ageDifference)} year${Math.abs(ageDifference) === 1 ? "" : "s"} ${ageDifference > 0 ? "older" : "younger"} than you`;
 
   return (
     <Card className="flex flex-col overflow-hidden">
@@ -41,13 +51,8 @@ export function MatchCard({
           <div>
             <CardTitle className="text-xl">
               <Link href={`/${match.username}`} className="hover:text-primary hover:underline">
-                {match.first_name ?? "A potential match"}
+                {match.username ? `@${match.username}` : "A potential match"}
               </Link>
-              {match.candidate_age ? (
-                <span className="ml-1 font-normal text-muted-foreground">
-                  , {match.candidate_age}
-                </span>
-              ) : null}
             </CardTitle>
             <CardDescription className="mt-1 flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" /> {match.home_city ?? "Near your preferred area"}
@@ -86,6 +91,7 @@ export function MatchCard({
               ? `${match.distance_miles} miles away`
               : "Within your search area"}
           </NoteLine>
+          {ageDifferenceLabel ? <NoteLine>{ageDifferenceLabel}</NoteLine> : null}
         </div>
         <div className="mt-auto pt-6">
           {accepted && contact ? (

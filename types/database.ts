@@ -450,6 +450,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_profile_preview: {
+        Args: { requested_username: string }
+        Returns: {
+          id: string
+          username: string | null
+          first_name: string | null
+          is_verified: boolean | null
+        }[]
+      }
+      get_profile_previews: {
+        Args: { requested_profile_ids: string[] }
+        Returns: {
+          id: string
+          username: string | null
+          first_name: string | null
+          is_verified: boolean | null
+        }[]
+      }
       get_matches: {
         Args: { requesting_profile_id: string; result_limit: number; result_offset: number }
         Returns: {

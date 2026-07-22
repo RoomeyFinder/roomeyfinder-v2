@@ -21,16 +21,44 @@ export async function getUserInterests(
 ) {
   const { data, error } = await supabase
     .from("interests")
-    .select(
-      "*, from_profile:profiles!interests_from_profile_id_fkey(first_name, username, bio, occupation, gender), to_profile:profiles!interests_to_profile_id_fkey(first_name, username, bio, occupation, gender)",
-    )
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  const items = (data ?? []) as InterestWithProfile[];
+  const items = data ?? [];
   const profileIds = [
     ...new Set(items.flatMap((item) => [item.from_profile_id, item.to_profile_id])),
   ];
+  const [{ data: previews }, { data: fullProfiles }] = await Promise.all([
+    profileIds.length
+      ? supabase.rpc("get_profile_previews", { requested_profile_ids: profileIds })
+      : Promise.resolve({ data: [] }),
+    supabase
+      .from("profiles")
+      .select("id, first_name, username, bio, occupation, gender, is_verified")
+      .in("id", profileIds),
+  ]);
+  const profileById = new Map<string, PublicProfile>(
+    (previews ?? []).map((profile) => [
+      profile.id,
+      {
+        first_name: profile.first_name,
+        username: profile.username,
+        bio: null,
+        occupation: null,
+        gender: null,
+      } satisfies PublicProfile,
+    ]),
+  );
+  for (const profile of fullProfiles ?? []) {
+    profileById.set(profile.id, {
+      first_name: profile.first_name,
+      username: profile.username,
+      bio: profile.bio,
+      occupation: profile.occupation,
+      gender: profile.gender,
+    });
+  }
   const { data: photos } = await supabase
     .from("profile_photos")
     .select("user_id, storage_path")
@@ -47,13 +75,25 @@ export async function getUserInterests(
   );
   return items.map((item) => ({
     ...item,
-    from_profile: item.from_profile && {
-      ...item.from_profile,
+    from_profile: {
+      ...(profileById.get(item.from_profile_id) ?? {
+        first_name: null,
+        username: null,
+        bio: null,
+        occupation: null,
+        gender: null,
+      }),
       photo_url: photoUrls.get(item.from_profile_id) ?? null,
     },
-    to_profile: item.to_profile && {
-      ...item.to_profile,
+    to_profile: {
+      ...(profileById.get(item.to_profile_id) ?? {
+        first_name: null,
+        username: null,
+        bio: null,
+        occupation: null,
+        gender: null,
+      }),
       photo_url: photoUrls.get(item.to_profile_id) ?? null,
     },
-  }));
+  })) as InterestWithProfile[];
 }

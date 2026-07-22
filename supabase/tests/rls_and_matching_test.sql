@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(12);
+SELECT plan(15);
 
 -- These users exercise the Auth trigger as well as the RLS policies. The test
 -- transaction is rolled back, so no users or listings are retained locally.
@@ -87,30 +87,39 @@ select is(
 
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000103', true);
 select is_empty(
+  $$select 1 from public.profiles where id = '00000000-0000-0000-0000-000000000101'$$,
+  'An unrelated user cannot read a full profile'
+);
+select is_empty(
   $$select 1 from public.profile_contacts where profile_id = '00000000-0000-0000-0000-000000000101'$$,
   'An unrelated user cannot read a private contact'
 );
 
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000101', true);
+select is(
+  (select first_name from public.profiles where id = '00000000-0000-0000-0000-000000000102'),
+  'Bob',
+  'An accepted match can read the full profile'
+);
 
 insert into public.homes (
   id, owner_id, title, description, city, state, country, rent, bedrooms, bathrooms, available_from
 )
 values (
-  '00000000-0000-0000-0000-000000000201',
+  '00000000-0000-0000-0000-000000000301',
   '00000000-0000-0000-0000-000000000101',
   'Sunny room', 'A quiet furnished room', 'London', 'London', 'United Kingdom', 1200, 1, 1, current_date + 30
 );
 
 select is(
-  (select status::text from public.homes where id = '00000000-0000-0000-0000-000000000201'),
+  (select status::text from public.homes where id = '00000000-0000-0000-0000-000000000301'),
   'draft',
   'New homes start as drafts'
 );
 
 select throws_ok(
   $$update public.homes set status = 'active'
-    where id = '00000000-0000-0000-0000-000000000201'$$,
+    where id = '00000000-0000-0000-0000-000000000301'$$,
   'P0001',
   'Complete the listing, address, and primary photo before publishing it',
   'An incomplete draft cannot be published'
@@ -118,24 +127,36 @@ select throws_ok(
 
 insert into public.home_addresses (home_id, location, street, postal_code)
 values (
-  '00000000-0000-0000-0000-000000000201',
+  '00000000-0000-0000-0000-000000000301',
   gis.st_setsrid(gis.st_makepoint(-0.1276, 51.5072), 4326)::gis.geography,
   '1 Example Street', 'SW1A 1AA'
 );
 
 insert into public.home_photos (home_id, storage_path, is_primary)
-values ('00000000-0000-0000-0000-000000000201', '00000000-0000-0000-0000-000000000101/home.jpg', true);
+values ('00000000-0000-0000-0000-000000000301', '00000000-0000-0000-0000-000000000101/home.jpg', true);
 
 update public.homes
 set status = 'active'
-where id = '00000000-0000-0000-0000-000000000201';
+where id = '00000000-0000-0000-0000-000000000301';
 
-select results_eq(
-  $$select profile_id from public.get_matches('00000000-0000-0000-0000-000000000101')$$,
-  $$values
-    ('00000000-0000-0000-0000-000000000103'::uuid),
-    ('00000000-0000-0000-0000-000000000104'::uuid)$$,
-  'The matching RPC returns compatible users and excludes an existing interest'
+select is(
+  (
+    select count(*)
+    from public.get_matches('00000000-0000-0000-0000-000000000101')
+    where profile_id in (
+      '00000000-0000-0000-0000-000000000103'::uuid,
+      '00000000-0000-0000-0000-000000000104'::uuid
+    )
+  ),
+  2::bigint,
+  'The matching RPC returns both compatible fixture users'
+);
+
+select is_empty(
+  $$select profile_id
+    from public.get_matches('00000000-0000-0000-0000-000000000101')
+    where profile_id = '00000000-0000-0000-0000-000000000102'::uuid$$,
+  'The matching RPC excludes an existing interest'
 );
 
 SELECT * FROM finish();

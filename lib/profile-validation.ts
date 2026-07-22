@@ -1,5 +1,17 @@
 export const MINIMUM_PROFILE_AGE = 18;
 
+export function getAge(dateOfBirth: string, today = new Date()) {
+  const [year, month, day] = dateOfBirth.split("-").map(Number);
+  if (![year, month, day].every(Number.isInteger)) return null;
+
+  let age = today.getFullYear() - year;
+  const birthdayHasNotArrived =
+    today.getMonth() < month - 1 || (today.getMonth() === month - 1 && today.getDate() < day);
+  if (birthdayHasNotArrived) age -= 1;
+
+  return age >= 0 ? age : null;
+}
+
 export function getDateOfBirthError(value: string, today = new Date()) {
   if (!value) return "Enter your date of birth.";
 

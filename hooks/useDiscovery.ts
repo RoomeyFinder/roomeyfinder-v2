@@ -4,11 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 import { getMatches, type Match } from "@/lib/matches";
+import { getAge } from "@/lib/profile-validation";
 import type { Interest, ProfileContact } from "@/types/schemas";
 
 export function useDiscovery(userId: string, enabled: boolean) {
   const pageSize = 12;
   const [matches, setMatches] = useState<Match[]>([]);
+  const [currentAge, setCurrentAge] = useState<number | null>(null);
   const [interests, setInterests] = useState<Interest[]>([]);
   const [contacts, setContacts] = useState<Record<string, ProfileContact>>({});
   const [loading, setLoading] = useState(false);
@@ -24,10 +26,15 @@ export function useDiscovery(userId: string, enabled: boolean) {
     const supabase = createClient();
 
     try {
-      const [matchData, outgoing, incoming] = await Promise.all([
+      const [matchData, outgoing, incoming, privateProfile] = await Promise.all([
         getMatches(userId, pageSize, 0),
         supabase.from("interests").select("*").eq("from_profile_id", userId),
         supabase.from("interests").select("*").eq("to_profile_id", userId),
+        supabase
+          .from("profile_private")
+          .select("date_of_birth")
+          .eq("profile_id", userId)
+          .maybeSingle(),
       ]);
 
       const interestData = [...(outgoing.data ?? []), ...(incoming.data ?? [])];
@@ -41,11 +48,14 @@ export function useDiscovery(userId: string, enabled: boolean) {
         ? await supabase.from("profile_contacts").select("*").in("profile_id", uniqueAcceptedIds)
         : { data: [], error: null };
 
-      if (outgoing.error || incoming.error || contactResult.error) {
-        throw outgoing.error ?? incoming.error ?? contactResult.error;
+      if (outgoing.error || incoming.error || privateProfile.error || contactResult.error) {
+        throw outgoing.error ?? incoming.error ?? privateProfile.error ?? contactResult.error;
       }
 
       setMatches(matchData);
+      setCurrentAge(
+        privateProfile.data?.date_of_birth ? getAge(privateProfile.data.date_of_birth) : null,
+      );
       setHasMore(matchData.length === pageSize);
       setInterests(interestData);
       setContacts(
@@ -142,6 +152,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
   return useMemo(
     () => ({
       matches,
+      currentAge,
       interests,
       contacts,
       loading,
@@ -157,6 +168,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
     }),
     [
       matches,
+      currentAge,
       interests,
       contacts,
       loading,

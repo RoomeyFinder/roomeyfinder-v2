@@ -5,8 +5,10 @@ import { Suspense } from "react";
 import { Home, Pencil, Settings2, UserRound } from "lucide-react";
 
 import { BackButton } from "@/components/back-button";
+import { HomeActions } from "@/components/home-actions";
 import { InterestButton } from "@/components/interest-button";
 import { createClient } from "@/lib/supabase/server";
+import type { Profile } from "@/types/schemas";
 
 const tabs = [
   { id: "profile", label: "Profile", icon: UserRound },
@@ -15,6 +17,11 @@ const tabs = [
 ] as const;
 
 type Tab = (typeof tabs)[number]["id"];
+type ProfilePreview = Pick<Profile, "id" | "username" | "first_name" | "is_verified">;
+type ProfileDetails = Pick<
+  Profile,
+  "id" | "username" | "first_name" | "gender" | "occupation" | "bio" | "is_verified"
+>;
 
 function isTab(value: string | undefined): value is Tab {
   return tabs.some((tab) => tab.id === value);
@@ -45,78 +52,98 @@ async function ProfileContent({
   searchParams: Promise<{ tab?: string }>;
 }) {
   const [{ username }, { tab: requestedTab }] = await Promise.all([params, searchParams]);
-  const activeTab = isTab(requestedTab) ? requestedTab : "profile";
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   const viewerId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, username, first_name, gender, occupation, bio, is_verified")
-    .ilike("username", username)
-    .maybeSingle();
-  if (!profile) notFound();
+  const { data: previewRows } = await supabase.rpc("get_profile_preview", {
+    requested_username: username,
+  });
+  const preview = (previewRows?.[0] ?? null) as ProfilePreview | null;
+  if (!preview) notFound();
 
-  const isOwner = viewerId === profile.id;
+  const isOwner = viewerId === preview.id;
+  const { data: existingInterestRows } =
+    !isOwner && viewerId
+      ? await supabase
+          .from("interests")
+          .select("id, status, from_profile_id")
+          .or(
+            `and(from_profile_id.eq.${viewerId},to_profile_id.eq.${preview.id}),and(from_profile_id.eq.${preview.id},to_profile_id.eq.${viewerId})`,
+          )
+          .order("created_at", { ascending: false })
+          .limit(1)
+      : { data: null };
+  const existingInterest = existingInterestRows?.[0] ?? null;
+  const isConnected = existingInterest?.status === "accepted";
+  const canViewFullProfile = isOwner || isConnected;
+  const activeTab =
+    canViewFullProfile && isTab(requestedTab) ? requestedTab : ("profile" satisfies Tab);
+
   const [
+    { data: fullProfile },
     { data: photo },
     { data: privateProfile },
     { data: preferences },
     { data: home },
-    { data: existingInterestRows },
   ] = await Promise.all([
-    supabase
-      .from("profile_photos")
-      .select("storage_path")
-      .eq("user_id", profile.id)
-      .order("is_primary", { ascending: false })
-      .order("position", { ascending: true })
-      .limit(1)
-      .maybeSingle(),
+    canViewFullProfile
+      ? supabase
+          .from("profiles")
+          .select("id, username, first_name, gender, occupation, bio, is_verified")
+          .eq("id", preview.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    canViewFullProfile
+      ? supabase
+          .from("profile_photos")
+          .select("storage_path")
+          .eq("user_id", preview.id)
+          .order("is_primary", { ascending: false })
+          .order("position", { ascending: true })
+          .limit(1)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
     isOwner
       ? supabase
           .from("profile_private")
           .select("last_name, date_of_birth")
-          .eq("profile_id", profile.id)
+          .eq("profile_id", preview.id)
           .maybeSingle()
       : Promise.resolve({ data: null }),
-    isOwner
+    canViewFullProfile
       ? supabase
           .from("preferences")
           .select(
             "max_distance_miles, budget_min, budget_max, move_in_from, move_in_to, preferred_gender, min_age, max_age, smoking_preference, pets_preference, match_with_home_seekers",
           )
-          .eq("user_id", profile.id)
+          .eq("user_id", preview.id)
           .maybeSingle()
       : Promise.resolve({ data: null }),
-    supabase
-      .from("homes")
-      .select(
-        "id, title, description, city, state, country, rent, deposit, bedrooms, bathrooms, available_from, status",
-      )
-      .eq("owner_id", profile.id)
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    !isOwner && viewerId
+    canViewFullProfile
       ? supabase
-          .from("interests")
-          .select("id, status, from_profile_id")
-          .or(
-            `and(from_profile_id.eq.${viewerId},to_profile_id.eq.${profile.id}),and(from_profile_id.eq.${profile.id},to_profile_id.eq.${viewerId})`,
+          .from("homes")
+          .select(
+            "id, title, description, city, state, country, rent, deposit, bedrooms, bathrooms, available_from, status",
           )
-          .order("created_at", { ascending: false })
+          .eq("owner_id", preview.id)
+          .order("updated_at", { ascending: false })
           .limit(1)
+          .maybeSingle()
       : Promise.resolve({ data: null }),
   ]);
-  const existingInterest = existingInterestRows?.[0] ?? null;
-  const isConnected = existingInterest?.status === "accepted";
+  const profile: ProfileDetails = fullProfile ?? {
+    ...preview,
+    gender: null,
+    occupation: null,
+    bio: null,
+  };
   const { data: connectedContacts } =
     isConnected && viewerId
       ? await supabase
           .from("profile_contacts")
           .select("profile_id, contact_email, contact_phone")
-          .in("profile_id", [viewerId, profile.id])
+          .in("profile_id", [viewerId, preview.id])
       : { data: null };
   const { data: homePhotos } = home
     ? await supabase
@@ -169,7 +196,7 @@ async function ProfileContent({
               <h1 className="text-2xl font-bold">
                 {formatValue(profile.first_name, profile.username ?? undefined)}
               </h1>
-              {profile.occupation ? (
+              {canViewFullProfile && profile.occupation ? (
                 <p className="text-muted-foreground">{profile.occupation}</p>
               ) : null}
             </div>
@@ -200,48 +227,63 @@ async function ProfileContent({
           />
         ) : null}
 
-        <nav className="grid grid-cols-3 border-b" aria-label="Profile sections">
-          {tabs.map(({ id, label, icon: Icon }) => (
-            <Link
-              key={id}
-              href={`/${profile.username}?tab=${id}`}
-              className={`flex items-center justify-center gap-2 border-b-2 px-3 py-4 text-sm font-medium ${activeTab === id ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </Link>
-          ))}
+        <nav
+          className={`grid border-b ${canViewFullProfile ? "grid-cols-3" : "grid-cols-1"}`}
+          aria-label="Profile sections"
+        >
+          {(canViewFullProfile ? tabs : tabs.filter((tab) => tab.id === "profile")).map(
+            ({ id, label, icon: Icon }) => (
+              <Link
+                key={id}
+                href={`/${profile.username}?tab=${id}`}
+                className={`flex items-center justify-center gap-2 border-b-2 px-3 py-4 text-sm font-medium ${activeTab === id ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </Link>
+            ),
+          )}
         </nav>
 
         <div className="p-6">
           {activeTab === "profile" ? (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold">
-                  About {isOwner ? "you" : profile.first_name || "this person"}
-                </h2>
-                <p className="mt-2 leading-relaxed text-muted-foreground">
-                  {formatValue(profile.bio, "No bio added yet.")}
+            canViewFullProfile ? (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold">
+                    About {isOwner ? "you" : profile.first_name || "this person"}
+                  </h2>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">
+                    {formatValue(profile.bio, "No bio added yet.")}
+                  </p>
+                </div>
+                <dl className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Occupation" value={profile.occupation} />
+                  <Field label="Gender" value={profile.gender} />
+                  {isOwner ? (
+                    <>
+                      <Field label="Last name" value={privateProfile?.last_name} />
+                      <Field label="Date of birth" value={privateProfile?.date_of_birth} />
+                    </>
+                  ) : null}
+                </dl>
+              </div>
+            ) : (
+              <div className="rounded-brand-md border border-dashed bg-secondary/30 p-5">
+                <h2 className="text-lg font-semibold">Limited profile preview</h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Personal details, photos, preferences, and home information stay private until
+                  this interest is accepted. Send interest to request a mutual connection.
                 </p>
               </div>
-              <dl className="grid gap-5 sm:grid-cols-2">
-                <Field label="Occupation" value={profile.occupation} />
-                <Field label="Gender" value={profile.gender} />
-                {isOwner ? (
-                  <>
-                    <Field label="Last name" value={privateProfile?.last_name} />
-                    <Field label="Date of birth" value={privateProfile?.date_of_birth} />
-                  </>
-                ) : null}
-              </dl>
-            </div>
+            )
           ) : null}
           {activeTab === "preferences" ? (
             <div>
               <h2 className="text-lg font-semibold">
                 {isOwner ? "Your preferences" : "Preferences"}
               </h2>
-              {isOwner && preferences ? (
+              {canViewFullProfile && preferences ? (
                 <dl className="mt-5 grid gap-5 sm:grid-cols-2">
                   <Field
                     label="Budget"
@@ -286,7 +328,7 @@ async function ProfileContent({
                 </h2>
                 {home?.status ? (
                   <span className="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-foreground">
-                    {home.status}
+                    {home.status === "archived" ? "inactive" : home.status}
                   </span>
                 ) : null}
               </div>
@@ -321,6 +363,13 @@ async function ProfileContent({
                     <Field label="Bathrooms" value={home.bathrooms} />
                     <Field label="Available from" value={home.available_from} />
                   </dl>
+                  {isOwner ? (
+                    <HomeActions
+                      homeId={home.id}
+                      status={home.status}
+                      photoPaths={(homePhotos ?? []).map((homePhoto) => homePhoto.storage_path)}
+                    />
+                  ) : null}
                 </>
               ) : (
                 <p className="mt-2 text-muted-foreground">

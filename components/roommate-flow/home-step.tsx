@@ -55,13 +55,13 @@ export function HomeStep({
   onViewMatches,
 }: HomeStepProps) {
   const [editing, setEditing] = useState(false);
-  const { selected, select, teamUp, toggleTeamUp, continueAsSeeker } = useHomeStep(
-    initialChoice,
-    initialTeamUp,
-    onContinue,
-  );
   const hasExistingHome = Boolean(existingHome);
   const hasActiveHome = existingHome?.status === "active";
+  const { selected, select, teamUp, toggleTeamUp, continueAsSeeker } = useHomeStep(
+    initialChoice,
+    initialTeamUp || hasActiveHome,
+    onContinue,
+  );
   const homeownerDraft = existingHome
     ? ({
         id: existingHome.id,
@@ -94,8 +94,8 @@ export function HomeStep({
     );
   }
 
-  const effectiveTeamUp = selected === "homeowner" || hasActiveHome ? false : teamUp;
-  const teamUpDisabled = selected === "homeowner" || hasActiveHome;
+  const effectiveTeamUp = selected === "homeowner" ? false : teamUp;
+  const teamUpDisabled = selected === "homeowner";
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -147,7 +147,7 @@ export function HomeStep({
               <p className="font-semibold">Open to finding a place together?</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {teamUpDisabled
-                  ? "This is unavailable while you have an active home. Choose home seeker to turn it on."
+                  ? "Choose home seeker to turn this on. Your active home will be disabled when you save this plan."
                   : "Turn this on to also see other home seekers who want to team up."}
               </p>
             </div>
@@ -448,7 +448,9 @@ function HomeForm({
         </p>
         <div className="mt-5 space-y-3 text-sm">
           <NoteLine>Only home seekers appear in your matches.</NoteLine>
-          <NoteLine>Your matching toggle is locked off while you own an active home.</NoteLine>
+          <NoteLine>
+            Your matching toggle is locked off while you select the homeowner plan.
+          </NoteLine>
           <NoteLine>
             Your home becomes active after the required details and a primary photo are saved.
           </NoteLine>
