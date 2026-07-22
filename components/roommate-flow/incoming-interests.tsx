@@ -1,4 +1,5 @@
-import { MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 import type { DiscoveryState } from "@/components/roommate-flow/types";
 
@@ -12,8 +13,15 @@ export function IncomingInterests({ interests }: { interests: DiscoveryState["in
         <div>
           <p className="font-semibold">Someone is interested in connecting</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Review their interest below. Accepting reveals contact details to both of you.
+            Review the request on your Interests page. Accepting reveals contact details to both of
+            you.
           </p>
+          <Link
+            href="/interests"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:underline"
+          >
+            Review interests <ArrowRight className="h-4 w-4" />
+          </Link>
           <div className="mt-3 flex flex-wrap gap-2">
             {interests.map((interest) => (
               <span key={interest.id} className="text-xs text-muted-foreground">
