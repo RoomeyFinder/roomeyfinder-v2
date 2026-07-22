@@ -35,6 +35,7 @@ export function RoommateFlow({
   const [activeStep, setActiveStep] = useState<FlowGate | null>(initialStep ?? null);
   const {
     saveHomeChoice,
+    reactivateHome: reactivateHomeInDatabase,
     saveHome: saveHomeToDatabase,
     deleteHomePhoto,
     saveProfile: saveProfileToDatabase,
@@ -92,6 +93,18 @@ export function RoommateFlow({
       return completed;
     },
     [router, saveHomeToDatabase],
+  );
+
+  const reactivateHome = useCallback(
+    async (homeId: string) => {
+      const completed = await reactivateHomeInDatabase(homeId);
+      if (completed) {
+        setActiveStep(null);
+        router.replace("/matches");
+      }
+      return completed;
+    },
+    [reactivateHomeInDatabase, router],
   );
 
   const navigateToCompletedStep = useCallback((step: string) => {
@@ -206,6 +219,7 @@ export function RoommateFlow({
             existingPhotos={existingPhotos}
             saving={flow.saving}
             onContinue={continueAsSeeker}
+            onReactivateHome={reactivateHome}
             onSaveHome={saveHome}
             onDeleteHomePhoto={deleteHomePhoto}
             onViewMatches={() => router.push("/matches")}

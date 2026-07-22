@@ -439,6 +439,65 @@ export function useOnboardingFlow(userId: string) {
     [userId],
   );
 
+  const reactivateHome = useCallback(
+    async (homeId: string) => {
+      setSaving(true);
+      setError("");
+      const supabase = createClient();
+
+      const homeResult = await supabase
+        .from("homes")
+        .update({ status: "active" })
+        .eq("id", homeId)
+        .eq("owner_id", userId)
+        .eq("status", "archived")
+        .select()
+        .single();
+
+      if (homeResult.error || !homeResult.data) {
+        setError(
+          getUserFacingDatabaseError(
+            homeResult.error,
+            "Complete your home listing before reactivating it.",
+          ),
+        );
+        setSaving(false);
+        return false;
+      }
+
+      const preferenceResult = await supabase
+        .from("preferences")
+        .update({ match_with_home_seekers: false })
+        .eq("user_id", userId)
+        .select()
+        .single();
+
+      if (preferenceResult.error) {
+        setError(preferenceResult.error.message);
+        setSaving(false);
+        return false;
+      }
+
+      setHomes((current) =>
+        current.map((home) =>
+          home.id === homeId
+            ? homeResult.data
+            : home.status === "active"
+              ? { ...home, status: "archived" as const }
+              : home,
+        ),
+      );
+      setPreferences(preferenceResult.data);
+      setStoredChoice("homeowner");
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(`roomey-home-choice-${userId}`, "homeowner");
+      }
+      setSaving(false);
+      return true;
+    },
+    [userId],
+  );
+
   const saveHome = useCallback(
     async (draft: HomeDraft) => {
       setSaving(true);
@@ -706,6 +765,7 @@ export function useOnboardingFlow(userId: string) {
       saveProfile,
       savePreferences,
       saveHomeChoice,
+      reactivateHome,
       saveHome,
       deleteHomePhoto,
       reload: load,
@@ -730,6 +790,7 @@ export function useOnboardingFlow(userId: string) {
       saveProfile,
       savePreferences,
       saveHomeChoice,
+      reactivateHome,
       saveHome,
       deleteHomePhoto,
       load,

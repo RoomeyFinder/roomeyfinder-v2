@@ -403,6 +403,10 @@ verify_jwt = false
 # Database Webhooks authenticate with the function's own shared secret.
 verify_jwt = false
 
+[functions.delete-account]
+# The function validates the caller's JWT before using the server-only admin key.
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327

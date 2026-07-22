@@ -37,6 +37,7 @@ type HomeStepProps = {
   existingPhotos: HomePhotoDraft[];
   saving: boolean;
   onContinue: (choice: Exclude<HomeChoice, "homeowner">) => Promise<boolean>;
+  onReactivateHome: (homeId: string) => Promise<boolean>;
   onSaveHome: (draft: HomeDraft) => Promise<boolean>;
   onDeleteHomePhoto: (homeId: string, photo: HomePhotoDraft) => Promise<boolean>;
   onViewMatches: () => void;
@@ -50,6 +51,7 @@ export function HomeStep({
   existingPhotos,
   saving,
   onContinue,
+  onReactivateHome,
   onSaveHome,
   onDeleteHomePhoto,
   onViewMatches,
@@ -96,6 +98,15 @@ export function HomeStep({
 
   const effectiveTeamUp = selected === "homeowner" ? false : teamUp;
   const teamUpDisabled = selected === "homeowner";
+
+  function handleHomeownerContinue() {
+    if (!existingHome) return;
+    if (hasActiveHome) {
+      onViewMatches();
+      return;
+    }
+    void onReactivateHome(existingHome.id);
+  }
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -170,9 +181,9 @@ export function HomeStep({
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <LockKeyhole className="h-4 w-4" /> Homeowners always match with seekers only.
         </div>
-        {selected === "homeowner" && hasActiveHome ? (
-          <Button disabled={saving} onClick={onViewMatches}>
-            See my matches <ArrowRight />
+        {selected === "homeowner" && hasExistingHome ? (
+          <Button disabled={saving} onClick={handleHomeownerContinue}>
+            {hasActiveHome ? "See my matches" : "Reactivate home & see matches"} <ArrowRight />
           </Button>
         ) : (
           <Button

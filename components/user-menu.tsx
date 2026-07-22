@@ -66,10 +66,13 @@ export function UserMenu({ displayName, username, avatarUrl }: UserMenuProps) {
         <DropdownMenuLabel>{displayName || "Your account"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={username ? `/${username}` : "/setup?step=profile"}>Account</Link>
+          <Link href={username ? `/${username}` : "/setup?step=profile"}>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/interests">Interests</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Theme</DropdownMenuLabel>

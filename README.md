@@ -109,6 +109,16 @@ npm run db:start
 npm run db:reset
 ```
 
+In a second terminal, serve the local Edge Functions:
+
+```bash
+npm run functions:serve
+```
+
+Keep this process running while testing account deletion or other Edge
+Function-backed flows. Without it, calls to `/functions/v1/delete-account`
+return a 503 from the local Supabase gateway.
+
 The local Supabase email inbox is available at [http://localhost:54324](http://localhost:54324). Magic links generated during local development appear there instead of being sent externally.
 
 The seed creates 48 test accounts across homeowner, roommate-pairing, and home-seeker scenarios. Example emails include:

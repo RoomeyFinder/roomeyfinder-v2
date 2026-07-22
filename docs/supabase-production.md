@@ -32,6 +32,16 @@ These same restrictions are committed in `supabase/config.toml` for local develo
 
 The repository includes [the migration workflow](../.github/workflows/supabase-migrations.yml). It applies pending SQL migrations to the production project when a commit reaches `main` and changes `supabase/migrations/**`. It can also be run manually from the **Actions** tab.
 
+Deploy the account-deletion Edge Function to the linked hosted project before
+enabling the Settings deletion flow:
+
+```bash
+npx supabase functions deploy delete-account
+```
+
+The function uses the hosted project's built-in `SUPABASE_URL` and admin secret
+environment variables; never add those secrets to a `NEXT_PUBLIC_` variable.
+
 ### One-time GitHub configuration
 
 1. In Supabase Dashboard, open **Account → Access Tokens** and create a personal access token for the GitHub Actions runner.
