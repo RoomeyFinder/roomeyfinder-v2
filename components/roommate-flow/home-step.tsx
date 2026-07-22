@@ -297,7 +297,7 @@ function HomeForm({
                   placeholder="15 Example Street"
                 />
               </Field>
-              <div className="grid gap-6 sm:grid-cols-2">
+              <div className="grid items-start gap-6 sm:grid-cols-2">
                 <Field
                   label="Annual rent for the entire home (₦)"
                   htmlFor="home-rent"
@@ -313,7 +313,12 @@ function HomeForm({
                     placeholder="250000"
                   />
                 </Field>
-                <Field label="Deposit (₦)" htmlFor="home-deposit" optional>
+                <Field
+                  label="Deposit (₦)"
+                  htmlFor="home-deposit"
+                  optional
+                  className="flex flex-col"
+                >
                   <Input
                     id="home-deposit"
                     type="number"

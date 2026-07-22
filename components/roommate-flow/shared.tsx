@@ -5,6 +5,7 @@ import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export function FlowLoading() {
   return (
@@ -147,6 +148,7 @@ export function Field({
   error,
   optional,
   children,
+  className,
 }: {
   label: string;
   htmlFor: string;
@@ -154,9 +156,10 @@ export function Field({
   error?: string;
   optional?: boolean;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="grid gap-3">
+    <div className={cn("grid gap-3", className)}>
       <Label htmlFor={htmlFor}>
         {label}
         {optional ? (

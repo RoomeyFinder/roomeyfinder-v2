@@ -101,8 +101,12 @@ export function RoommateFlow({
     activeStepIndex >= 0 && (activeStepIndex <= gateIndex || initialStep !== undefined);
 
   useEffect(() => {
-    if (flow.error) toast.error(flow.error);
-  }, [flow.error]);
+    if (!flow.error) return;
+
+    toast.error(flow.error);
+    const timeoutId = window.setTimeout(flow.clearError, 6000);
+    return () => window.clearTimeout(timeoutId);
+  }, [flow.error, flow.clearError]);
 
   if (flow.loading) return <FlowLoading />;
 

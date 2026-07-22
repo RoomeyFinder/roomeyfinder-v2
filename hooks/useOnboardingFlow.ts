@@ -35,6 +35,7 @@ export function useOnboardingFlow(userId: string) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const clearError = useCallback(() => setError(""), []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -624,6 +625,17 @@ export function useOnboardingFlow(userId: string) {
       }
 
       if (replacement) {
+        const clearPrimaryResult = await supabase
+          .from("home_photos")
+          .update({ is_primary: false })
+          .eq("id", photo.id)
+          .eq("home_id", homeId);
+        if (clearPrimaryResult.error) {
+          setError(clearPrimaryResult.error.message);
+          setSaving(false);
+          return false;
+        }
+
         const replacementResult = await supabase
           .from("home_photos")
           .update({ is_primary: true })
@@ -687,6 +699,7 @@ export function useOnboardingFlow(userId: string) {
       loading,
       saving,
       error,
+      clearError,
       saveProfile,
       savePreferences,
       saveHomeChoice,
@@ -710,6 +723,7 @@ export function useOnboardingFlow(userId: string) {
       loading,
       saving,
       error,
+      clearError,
       saveProfile,
       savePreferences,
       saveHomeChoice,
