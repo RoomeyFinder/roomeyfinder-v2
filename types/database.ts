@@ -234,6 +234,60 @@ export type Database = {
           },
         ]
       }
+      interest_notification_events: {
+        Row: {
+          attempts: number
+          created_at: string
+          event_type: "new_request" | "accepted_request"
+          id: string
+          interest_id: string
+          last_error: string | null
+          provider_id: string | null
+          recipient_profile_id: string
+          sent_at: string | null
+          status: "pending" | "processing" | "sent" | "failed"
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          event_type: "new_request" | "accepted_request"
+          id?: string
+          interest_id: string
+          last_error?: string | null
+          provider_id?: string | null
+          recipient_profile_id: string
+          sent_at?: string | null
+          status?: "pending" | "processing" | "sent" | "failed"
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          event_type?: "new_request" | "accepted_request"
+          id?: string
+          interest_id?: string
+          last_error?: string | null
+          provider_id?: string | null
+          recipient_profile_id?: string
+          sent_at?: string | null
+          status?: "pending" | "processing" | "sent" | "failed"
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interest_notification_events_interest_id_fkey"
+            columns: ["interest_id"]
+            isOneToOne: false
+            referencedRelation: "interests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interest_notification_events_recipient_profile_id_fkey"
+            columns: ["recipient_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       preferences: {
         Row: {
           budget_max: number | null

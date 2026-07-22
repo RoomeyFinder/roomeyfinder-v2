@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient, type User } from "npm:@supabase/supabase-js@2.110.6";
+import { createClient, type SupabaseClient, type User } from "@supabase/supabase-js";
 
 type LifecycleStage = "three_months" | "one_month" | "seven_days" | "twenty_four_hours";
 
@@ -35,6 +35,21 @@ function env(name: string, required = true) {
   }
 
   return value ?? "";
+}
+
+function getAdminKey() {
+  const legacyKey =
+    Deno.env.get("SUPABASE_SECRET_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (legacyKey) return legacyKey;
+
+  const configuredKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (configuredKeys) {
+    const keys = JSON.parse(configuredKeys) as Record<string, string>;
+    const defaultKey = keys.default ?? Object.values(keys)[0];
+    if (defaultKey) return defaultKey;
+  }
+
+  throw new Error("Supabase did not provide an admin secret key");
 }
 
 function isEnabled(name: string) {
@@ -401,13 +416,7 @@ async function processUser(
 
 async function run() {
   const supabaseUrl = env("SUPABASE_URL");
-  const serviceRoleKey =
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_SECRET_KEY") ?? "";
-  if (!serviceRoleKey) {
-    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEY");
-  }
-
-  const admin = createClient(supabaseUrl, serviceRoleKey, {
+  const admin = createClient(supabaseUrl, getAdminKey(), {
     auth: { autoRefreshToken: false, persistSession: false },
   });
   const now = new Date();

@@ -21,13 +21,16 @@ The implementation is split into:
 The function needs these Supabase secrets/environment variables:
 
 ```text
-SUPABASE_SERVICE_ROLE_KEY=<server-only Supabase service role key>
 RESEND_API_KEY=<Resend API key>
-INACTIVITY_FROM_EMAIL=RoomeyFinder <hello@your-domain.com>
+INACTIVITY_FROM_EMAIL=RoomeyFinder <notifications@mail.roomeyfinder.com>
 APP_URL=https://your-production-domain.com
 ACCOUNT_INACTIVITY_CRON_SECRET=<long random value>
 ACCOUNT_INACTIVITY_ALLOW_DELETION=true
 ```
+
+Supabase automatically provides the admin secret key to Edge Functions through
+`SUPABASE_SECRET_KEYS`; do not add a custom secret whose name starts with
+`SUPABASE_`.
 
 Keep `ACCOUNT_INACTIVITY_ALLOW_DELETION=false` while testing. Setting
 `ACCOUNT_INACTIVITY_DRY_RUN=true` makes the job report what it would do without
