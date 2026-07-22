@@ -446,6 +446,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      reset_account_inactivity: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_matches: {
         Args: { requesting_profile_id: string; result_limit: number; result_offset: number }
         Returns: {

@@ -33,6 +33,13 @@ export async function GET(request: NextRequest) {
     return errorRedirect(request, "This sign-in link is invalid or has expired.");
   }
 
+  // A completed sign-in starts a fresh inactivity cycle. Keep this non-fatal
+  // so an auth callback still succeeds if the lifecycle migration is pending.
+  const { error: inactivityResetError } = await supabase.rpc("reset_account_inactivity");
+  if (inactivityResetError) {
+    console.error("Unable to reset account inactivity cycle:", inactivityResetError.message);
+  }
+
   const redirectUrl = request.nextUrl.clone();
   redirectUrl.pathname = next;
   redirectUrl.search = "";
