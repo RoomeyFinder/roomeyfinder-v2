@@ -20,3 +20,23 @@ create index interest_notification_events_pending_idx
 
 alter table public.interest_notification_events enable row level security;
 revoke all on public.interest_notification_events from public, anon, authenticated;
+
+-- Realtime needs the previous status to deliver pending -> accepted/declined
+-- transitions to the other participant.
+alter table public.interests replica identity full;
+
+do $$
+begin
+  if exists (
+    select 1 from pg_publication where pubname = 'supabase_realtime'
+  ) and not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'interests'
+  ) then
+    alter publication supabase_realtime add table public.interests;
+  end if;
+end;
+$$;

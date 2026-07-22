@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/client";
+import { useInterestRealtime } from "@/components/interest-realtime-provider";
 import { getMatches, type Match } from "@/lib/matches";
 import { getAge } from "@/lib/profile-validation";
 import type { Interest, ProfileContact } from "@/types/schemas";
@@ -18,6 +20,7 @@ export function useDiscovery(userId: string, enabled: boolean) {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
   const [workingId, setWorkingId] = useState<string | null>(null);
+  const latestInterestChange = useInterestRealtime();
 
   const load = useCallback(async () => {
     if (!enabled) return;
@@ -85,9 +88,54 @@ export function useDiscovery(userId: string, enabled: boolean) {
     }
   }, [enabled, hasMore, loading, loadingMore, matches.length, userId]);
 
+  const applyRealtimeInterest = useCallback(
+    async (payload: RealtimePostgresChangesPayload<Interest>) => {
+      if (payload.eventType === "DELETE") {
+        setInterests((current) => current.filter((interest) => interest.id !== payload.old.id));
+        return;
+      }
+
+      const nextInterest = payload.new as Interest;
+      if (!nextInterest.id) return;
+
+      setInterests((current) => {
+        const existing = current.some((interest) => interest.id === nextInterest.id);
+        return existing
+          ? current.map((interest) =>
+              interest.id === nextInterest.id ? { ...interest, ...nextInterest } : interest,
+            )
+          : [...current, nextInterest];
+      });
+
+      if (nextInterest.status !== "accepted") return;
+
+      const otherProfileId =
+        nextInterest.from_profile_id === userId
+          ? nextInterest.to_profile_id
+          : nextInterest.from_profile_id;
+      const { data: contact, error: contactError } = await createClient()
+        .from("profile_contacts")
+        .select("*")
+        .eq("profile_id", otherProfileId)
+        .maybeSingle();
+
+      if (contactError) {
+        console.error("Unable to load the accepted match contact:", contactError);
+        return;
+      }
+      if (contact) setContacts((current) => ({ ...current, [otherProfileId]: contact }));
+    },
+    [userId],
+  );
+
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (!enabled || !latestInterestChange) return;
+    void applyRealtimeInterest(latestInterestChange.payload);
+  }, [applyRealtimeInterest, enabled, latestInterestChange]);
 
   const interestFor = useCallback(
     (candidateId: string) =>

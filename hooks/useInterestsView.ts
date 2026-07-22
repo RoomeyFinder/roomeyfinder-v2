@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useInterestRealtime } from "@/components/interest-realtime-provider";
 import { createClient } from "@/lib/supabase/client";
+import type { Interest } from "@/types/schemas";
 import type { InterestStatus, InterestWithProfile } from "@/lib/interests";
 
 export type InterestDirection = "sent" | "received";
@@ -14,6 +16,21 @@ export function useInterestsView(interests: InterestWithProfile[], userId: strin
   const [sort, setSort] = useState<InterestSort>("desc");
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const latestInterestChange = useInterestRealtime();
+
+  useEffect(() => {
+    const payload = latestInterestChange?.payload;
+    if (!payload || payload.eventType !== "UPDATE") return;
+
+    const nextInterest = payload.new as Interest;
+    setItems((current) =>
+      current.map((interest) =>
+        interest.id === nextInterest.id
+          ? { ...interest, status: nextInterest.status, updated_at: nextInterest.updated_at }
+          : interest,
+      ),
+    );
+  }, [latestInterestChange]);
 
   const visibleInterests = useMemo(
     () =>

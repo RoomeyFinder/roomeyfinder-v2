@@ -3,6 +3,7 @@ import type { Viewport } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { brand } from "@/lib/brand";
+import { InterestRealtimeProvider } from "@/components/interest-realtime-provider";
 import { ToastProvider } from "@/components/toast-provider";
 import "./globals.css";
 
@@ -80,8 +81,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <ToastProvider />
+          <InterestRealtimeProvider>
+            {children}
+            <ToastProvider />
+          </InterestRealtimeProvider>
         </ThemeProvider>
       </body>
     </html>
