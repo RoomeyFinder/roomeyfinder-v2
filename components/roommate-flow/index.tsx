@@ -33,6 +33,14 @@ export function RoommateFlow({
   const router = useRouter();
   const flow = useOnboardingFlow(userId);
   const [activeStep, setActiveStep] = useState<FlowGate | null>(initialStep ?? null);
+
+  useEffect(() => {
+    // Cache Components can preserve this client component while only the
+    // setup query string changes. Keep the displayed step in sync with an
+    // explicit URL step, including when returning to the automatic gate.
+    setActiveStep(initialStep ?? null);
+  }, [initialStep]);
+
   const {
     saveHomeChoice,
     reactivateHome: reactivateHomeInDatabase,

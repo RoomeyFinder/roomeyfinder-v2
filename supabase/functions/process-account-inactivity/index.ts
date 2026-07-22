@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient, type User } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient, type User } from "npm:@supabase/supabase-js";
 
 type LifecycleStage = "three_months" | "one_month" | "seven_days" | "twenty_four_hours";
 
